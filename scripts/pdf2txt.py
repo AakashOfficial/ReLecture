@@ -24,5 +24,8 @@ def pdf2txt(pdf, output_json, output_csv):
 	for key, val in slide_by_number.items():
 		w.writerow([key, val])
 
+def pdf_length(pdf):
+	reader = PyPDF2.PdfFileReader(open(pdf, 'rb'))
+	return reader.getNumPages()
+
 #example : pdf2txt('UML.pdf', '1.json', '2.csv')
-pdf2txt('UML.pdf', '1.json', '2.csv')

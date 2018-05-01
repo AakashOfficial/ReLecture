@@ -1,6 +1,6 @@
 from pydub import AudioSegment
 
-def length_mp3(input_file, input_format):
+def mp3_length(input_file, input_format):
 	if (input_format == "mp3"):
 		recording = AudioSegment.from_mp3(input_file)
 	elif (input_format == "wav"):
@@ -13,7 +13,7 @@ def length_mp3(input_file, input_format):
 	return len(recording)
 
 
-def segment_mp3(input_file, input_format, output_file, start_time, end_time):
+def mp3_segment(input_file, input_format, output_file, start_time, end_time):
 	if (input_format == "mp3"):
 		recording = AudioSegment.from_mp3(input_file)
 	elif (input_format == "wav"):
@@ -28,8 +28,22 @@ def segment_mp3(input_file, input_format, output_file, start_time, end_time):
 		return False
 
 	segment = recording[start_time:end_time]
-
-	# writing mp3 files is a one liner
 	segment.export(output_file, format="mp3")
+
+	return True
+
+def mp3_segment_all(input_file, input_format, boundaries, output_file):
+	if (input_format == "mp3"):
+		recording = AudioSegment.from_mp3(input_file)
+	elif (input_format == "wav"):
+		recording = AudioSegment.from_wav(input_file)
+	elif (input_format == "ogg"):
+		recording = AudioSegment.from_ogg(input_file)
+	else:
+		return False
+
+	for i in range(1,len(boundaries)+1):
+		start, end = boundaries[i]
+		recording[start:end].export(output_file+"_"+str(i)+".mp3", format="mp3")
 
 	return True
