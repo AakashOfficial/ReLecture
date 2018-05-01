@@ -1,5 +1,18 @@
 from pydub import AudioSegment
 
+def length_mp3(input_file, input_format):
+	if (input_format == "mp3"):
+		recording = AudioSegment.from_mp3(input_file)
+	elif (input_format == "wav"):
+		recording = AudioSegment.from_wav(input_file)
+	elif (input_format == "ogg"):
+		recording = AudioSegment.from_ogg(input_file)
+	else:
+		return -1
+
+	return len(recording)
+
+
 def segment_mp3(input_file, input_format, output_file, start_time, end_time):
 	if (input_format == "mp3"):
 		recording = AudioSegment.from_mp3(input_file)
