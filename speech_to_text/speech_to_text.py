@@ -277,103 +277,73 @@ def check_credentials(credentials):
         raise argparse.ArgumentTypeError(
             '"%s" is not a valid format for the credentials ' % credentials)
 
+def speech_to_text(audio_file):
+    credentials = '2dc8e7bd-8219-42cc-9913-cea7af948071:TVNKFLoJjeOv'
+    dirOutput = './output'
+    contentType = 'audio/mp3'
+    model = 'en-US_BroadbandModel'
+    am_custom_id = None
+    lm_custom_id = None
+    threads = '1'
+    optOut = False
+    tokenauth = False
 
-if __name__ == '__main__':
-
-    # parse command line parameters
-    parser = argparse.ArgumentParser(
-        description=('client to do speech recognition using the WebSocket '
-                     'interface to the Watson STT service'))
-    parser.add_argument(
-        '-credentials', action='store', dest='credentials',
-        help="Basic Authentication credentials in the form 'username:password'",
-        required=True, type=check_credentials)
-    parser.add_argument(
-        '-in', action='store', dest='fileInput', default='./recordings.txt',
-        help='text file containing audio files')
-    parser.add_argument(
-        '-out', action='store', dest='dirOutput', default='./output',
-        help='output directory')
-    parser.add_argument(
-        '-type', action='store', dest='contentType', default='audio/mp3',
-        help='audio content type, for example: \'audio/l16; rate=44100\'')
-    parser.add_argument(
-        '-model', action='store', dest='model', default='en-US_BroadbandModel',
-        help='STT model that will be used')
-    parser.add_argument(
-        '-amcustom', action='store', dest='am_custom_id', default=None,
-        help='id of the acoustic model customization that will be used', required=False)
-    parser.add_argument(
-        '-lmcustom', action='store', dest='lm_custom_id', default=None,
-        help='id of the language model customization that will be used', required=False)
-    parser.add_argument(
-        '-threads', action='store', dest='threads', default='1',
-        help='number of simultaneous STT sessions', type=check_positive_int)
-    parser.add_argument(
-        '-optout', action='store_true', dest='optOut',
-        help=('specify opt-out header so user data, such as speech and '
-              'hypotheses are not logged into the server'))
-    parser.add_argument(
-        '-tokenauth', action='store_true', dest='tokenauth',
-        help='use token based authentication')
-
-    args = parser.parse_args()
+    credentials = check_credentials(credentials)
+    threads = check_positive_int(threads)
 
     # create output directory if necessary
-    if os.path.isdir(args.dirOutput):
+    if os.path.isdir(dirOutput):
         fmt = 'the output directory "{}" already exists, overwrite? (y/n)? '
         while True:
-            answer = raw_input(fmt.format(args.dirOutput)).strip().lower()
+            answer = raw_input(fmt.format(dirOutput)).strip().lower()
             if answer == "n":
                 sys.stderr.write("exiting...")
                 sys.exit()
             elif answer == "y":
                 break
     else:
-        os.makedirs(args.dirOutput)
+        os.makedirs(dirOutput)
 
     # logging
     log.startLogging(sys.stdout)
 
     # add audio files to the processing queue
     q = Queue()
-    lines = [line.rstrip('\n') for line in open(args.fileInput)]
     fileNumber = 0
-    for fileName in lines:
-        print(fileName)
-        q.put((fileNumber, fileName))
-        fileNumber += 1
+    print(audio_file)
+    q.put((fileNumber, audio_file))
+    fileNumber += 1
 
     hostname = "stream.watsonplatform.net"
-    headers = {'X-WDC-PL-OPT-OUT': '1'} if args.optOut else {}
+    headers = {'X-WDC-PL-OPT-OUT': '1'} if optOut else {}
 
     # authentication header
-    if args.tokenauth:
+    if tokenauth:
         headers['X-Watson-Authorization-Token'] = (
             Utils.getAuthenticationToken('https://' + hostname,
                                          'speech-to-text',
-                                         args.credentials[0],
-                                         args.credentials[1]))
+                                         credentials[0],
+                                         credentials[1]))
     else:
-        auth = args.credentials[0] + ":" + args.credentials[1]
+        auth = credentials[0] + ":" + credentials[1]
         headers["Authorization"] = "Basic " + base64.b64encode(auth.encode('UTF-8')).decode('ascii')
 
     print(headers)
     # create a WS server factory with our protocol
     fmt = "wss://{}/speech-to-text/api/v1/recognize?model={}"
-    url = fmt.format(hostname, args.model)
-    if args.am_custom_id != None:
-        url += "&acoustic_customization_id=" + args.am_custom_id
-    if args.lm_custom_id != None:
-        url += "&customization_id=" + args.lm_custom_id
+    url = fmt.format(hostname, model)
+    if am_custom_id != None:
+        url += "&acoustic_customization_id=" + am_custom_id
+    if lm_custom_id != None:
+        url += "&customization_id=" + lm_custom_id
     print(url)
     summary = {}
     jsonlist = {}
-    factory = WSInterfaceFactory(q, jsonlist, summary, args.dirOutput, args.contentType,
-                                 args.model, url, headers, debug=False)
+    factory = WSInterfaceFactory(q, jsonlist, summary, dirOutput, contentType,
+                                 model, url, headers, debug=False)
     factory.protocol = WSInterfaceProtocol
 
-    for i in range(min(int(args.threads), q.qsize())):
+    for i in range(min(int(threads), q.qsize())):
 
         factory.prepareUtterance()
 
@@ -387,7 +357,7 @@ if __name__ == '__main__':
     reactor.run()
 
     # dump the hypotheses to the output file
-    fileHypotheses = args.dirOutput + "/hypotheses.txt"
+    fileHypotheses = dirOutput + "/hypotheses.txt"
     f = open(fileHypotheses, "w")
     successful = 0
     emptyHypotheses = 0
@@ -409,8 +379,14 @@ if __name__ == '__main__':
     f.close()
     fmt = "successful sessions: {} ({} errors) ({} empty hypotheses)"
     print(fmt.format(successful, len(summary) - successful, emptyHypotheses))
-    print(jsonlist)
-    with open("{}/json.txt".format(args.dirOutput), "w") as f:
+
+    with open("{}/json.txt".format(dirOutput), "w") as f:
         for ele in jsonlist:
             f.write(json.dumps(jsonlist[ele], indent=4, sort_keys=True))
         f.close()
+
+
+
+if __name__ == '__main__':
+    speech_to_text('./recordings/test2.mp3')
+

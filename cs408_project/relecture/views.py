@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.utils import timezone
 from django.http import HttpResponse
 
@@ -8,10 +7,9 @@ from django.shortcuts import render, get_object_or_404
 from .models import Post
 from .forms import PostForm
 
-from django.template import RequestContext
 from .models import Document
 from .forms import DocumentForm
-from django.core.urlresolvers import reverse
+from .function.pdf2txt import pdf2txt
 
 
 def test(request):
@@ -60,7 +58,7 @@ def upload_file(request):
         if form.is_valid():
             new_doc = Document(doc_file= request.FILES['doc_file'])
             new_doc.save()
-            return HttpResponse('File Uploaded')
+            return HttpResponse('<div>Recording_File Uploaded</div><h1><a href="/">Relecture post</a></h1>')
 
 
 
@@ -69,4 +67,36 @@ def upload_file(request):
 
     documents = Document.objects.all()
 
-    return render(request,'relecture/file_upload.html', {'documents': documents, 'form': form})
+    return render(request,'relecture/pdf_upload.html', {'documents': documents, 'form': form})
+
+def pdf_upload(request):
+    if request.method == 'POST':
+        form = DocumentForm(request.POST, request.FILES)
+        if form.is_valid():
+            new_doc = Document(doc_file= request.FILES['doc_file'])
+            new_doc.save()
+            pdf2txt(new_doc.doc_file.path, '1.json', '2.csv')
+            return HttpResponse('<div>PDF_File Uploaded</div><h1><a href="/">Relecture post</a></h1>')
+
+
+    else:
+        form = DocumentForm()
+
+    documents = Document.objects.all()
+
+    return render(request,'relecture/pdf_upload.html', {'documents': documents, 'form': form})
+
+def pdf_view(request):
+    if request.method == 'POST':
+        form = DocumentForm(request.POST, request.FILES)
+        if form.is_valid():
+            new_doc = Document(doc_file= request.FILES['doc_file'])
+            new_doc.save()
+            return render(request, 'relecture/pdf_view.html', {'document': new_doc})
+
+    else:
+        form = DocumentForm()
+
+    documents = Document.objects.all()
+
+    return render(request,'relecture/pdf_upload.html', {'documents': documents, 'form': form})
