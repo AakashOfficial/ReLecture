@@ -9,4 +9,6 @@ urlpatterns = [
     url(r'^post_list/post/(?P<pk>\d+)/edit/$', views.post_edit, name='post_edit'),
     url(r'^post_list/post/(?P<pk>\d+)/$', views.post_detail, name='post_detail'),
     url(r'^file_upload/$', views.upload_file, name='file_upload'),
+    url(r'^pdf_upload/$', views.pdf_upload, name='pdf_upload'),
+    url(r'^pdf_view/$', views.pdf_view, name='pdf_view'),
 ]

@@ -1,10 +1,14 @@
+{% extends 'relecture/base.html' %}
+
+{% block content %}
+
 <div>
     <h3>File Uploading Form</h3>
 
     {% if documents %}
         <ul>
             {% for document in documents %}
-            <li><a href="{{ document.doc_file.url }}">{{document.doc_file.name}}</a></li>
+            <li><a href="{{ document.doc_file.path }}">{{document.doc_file.name}}</a></li>
             {% endfor %}
         </ul>
         {% else %}
@@ -24,3 +28,5 @@
         <p><input type="submit" value="Upload" /></p>
     </form>
 </div>
+
+{% endblock %}

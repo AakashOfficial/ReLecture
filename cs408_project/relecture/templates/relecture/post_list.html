@@ -1,6 +1,8 @@
 {% extends 'relecture/base.html' %}
 
 {% block content %}
+<a href="{% url 'post_new' %}" class="mid-menu"><span class="glyphicon glyphicon-plus">포스트추가하기</span></a>
+
     {% for post in posts %}
         <div class="post">
             <div class="date">

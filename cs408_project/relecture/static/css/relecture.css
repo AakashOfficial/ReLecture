@@ -10,7 +10,7 @@ body {
 .page-header {
     background-color: #ff9400;
     margin-top: 0;
-    padding: 20px 20px 20px 40px;
+    padding: 20px 20px 60px 40px;
 }
 
 .page-header h1, .page-header h1 a, .page-header h1 a:visited, .page-header h1 a:active {
@@ -23,7 +23,7 @@ body {
     margin-left: 40px;
 }
 
-h1, h2, h3, h4 {
+h1, h2, h3, h4, h5, h6 {
     font-family: 'Nunito', cursive;
 }
 
@@ -41,6 +41,13 @@ h1, h2, h3, h4 {
 
 .top-menu, .top-menu:hover, .top-menu:visited {
     color: #ffffff;
+    float: right;
+    font-size: 26pt;
+    margin-right: 20px;
+}
+
+.mid-menu, .mid-menu:hover, .mid-menu:visited {
+    color: #FCA205;
     float: right;
     font-size: 26pt;
     margin-right: 20px;
