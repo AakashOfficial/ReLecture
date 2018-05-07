@@ -124,5 +124,5 @@ STATIC_ROOT = os.path.join(BASE_DIR, 'static')
 MEDIA_URL = '/media/'
 # remote server case
 # MEDIA_URL = 'http://static.myservice.com/media/'
-MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+MEDIA_ROOT = os.path.join(BASE_DIR, os.path.join('relecture','media'))
 
