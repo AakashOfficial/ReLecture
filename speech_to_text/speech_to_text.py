@@ -283,8 +283,8 @@ def speech_to_text(audio_file):
     contentType = 'audio/mp3'
     model = 'en-US_BroadbandModel'
     am_custom_id = None
-    lm_custom_id = None
-    threads = '1'
+    lm_custom_id = "986dec2e-ec47-4249-9264-f6ff46962cf5"
+    threads = '50'
     optOut = False
     tokenauth = False
 
@@ -380,13 +380,16 @@ def speech_to_text(audio_file):
     fmt = "successful sessions: {} ({} errors) ({} empty hypotheses)"
     print(fmt.format(successful, len(summary) - successful, emptyHypotheses))
 
-    with open("{}/json.txt".format(dirOutput), "w") as f:
+    with open("{}/script.json".format(dirOutput), "w") as f:
+        f.write("[")
         for ele in jsonlist:
             f.write(json.dumps(jsonlist[ele], indent=4, sort_keys=True))
+            if len(jsonlist)-1 != ele:
+                f.write(",")
+        f.write("]")
         f.close()
 
 
 
 if __name__ == '__main__':
     speech_to_text('./recordings/test2.mp3')
-
