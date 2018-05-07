@@ -1,0 +1,32 @@
+{% extends 'relecture/base.html' %}
+
+{% block content %}
+
+<div>
+    <h3>File Uploading Form</h3>
+
+    {% if documents %}
+        <ul>
+            {% for document in documents %}
+            <li><a href="{{ document.doc_file.path }}">{{document.doc_file.name}}</a></li>
+            {% endfor %}
+        </ul>
+        {% else %}
+            <p>No documents.</p>
+        {% endif %}
+</div>
+
+<div>
+    <form action="" method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <p>{{ form.non_field_errors}}</p>
+        <p>{{ form.doc_file.label_tag}} {{form.doc_file.help_text}}</p>
+        <p>
+            {{ form.doc_file.errors }}
+            {{ form.doc_file }}
+        </p>
+        <p><input type="submit" value="Upload" /></p>
+    </form>
+</div>
+
+{% endblock %}
