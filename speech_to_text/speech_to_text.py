@@ -277,13 +277,15 @@ def check_credentials(credentials):
         raise argparse.ArgumentTypeError(
             '"%s" is not a valid format for the credentials ' % credentials)
 
-def speech_to_text(audio_file):
+def speech_to_text(audio_file, custom_id):
     credentials = '2dc8e7bd-8219-42cc-9913-cea7af948071:TVNKFLoJjeOv'
     dirOutput = './output'
     contentType = 'audio/mp3'
     model = 'en-US_BroadbandModel'
     am_custom_id = None
-    lm_custom_id = "986dec2e-ec47-4249-9264-f6ff46962cf5"
+    lm_custom_id = None
+    if custom_id:
+        lm_custom_id = custom_id
     threads = '50'
     optOut = False
     tokenauth = False
@@ -392,4 +394,4 @@ def speech_to_text(audio_file):
 
 
 if __name__ == '__main__':
-    speech_to_text('./recordings/test2.mp3')
+    speech_to_text('./recordings/test2.mp3',"986dec2e-ec47-4249-9264-f6ff46962cf5")
