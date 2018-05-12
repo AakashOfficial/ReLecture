@@ -10,6 +10,7 @@ from .forms import PostForm
 from .models import Document
 from .forms import DocumentForm
 from .function.pdf2txt import pdf2txt
+from .function.speech_to_text import speech_to_text
 
 
 def test(request):
@@ -58,6 +59,8 @@ def upload_file(request):
         if form.is_valid():
             new_doc = Document(doc_file= request.FILES['doc_file'])
             new_doc.save()
+            print(new_doc.doc_file.path)
+            speech_to_text(new_doc.doc_file.path)
             return HttpResponse('<div>Recording_File Uploaded</div><h1><a href="/">Relecture post</a></h1>')
 
 

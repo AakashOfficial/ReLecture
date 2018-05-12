@@ -277,16 +277,14 @@ def check_credentials(credentials):
         raise argparse.ArgumentTypeError(
             '"%s" is not a valid format for the credentials ' % credentials)
 
-def speech_to_text(audio_file, custom_id):
+def speech_to_text(audio_file):
     credentials = '2dc8e7bd-8219-42cc-9913-cea7af948071:TVNKFLoJjeOv'
     dirOutput = './output'
     contentType = 'audio/mp3'
     model = 'en-US_BroadbandModel'
     am_custom_id = None
     lm_custom_id = None
-    if custom_id:
-        lm_custom_id = custom_id
-    threads = '50'
+    threads = '1'
     optOut = False
     tokenauth = False
 
@@ -295,14 +293,7 @@ def speech_to_text(audio_file, custom_id):
 
     # create output directory if necessary
     if os.path.isdir(dirOutput):
-        fmt = 'the output directory "{}" already exists, overwrite? (y/n)? '
-        while True:
-            answer = raw_input(fmt.format(dirOutput)).strip().lower()
-            if answer == "n":
-                sys.stderr.write("exiting...")
-                sys.exit()
-            elif answer == "y":
-                break
+        pass
     else:
         os.makedirs(dirOutput)
 
@@ -382,16 +373,13 @@ def speech_to_text(audio_file, custom_id):
     fmt = "successful sessions: {} ({} errors) ({} empty hypotheses)"
     print(fmt.format(successful, len(summary) - successful, emptyHypotheses))
 
-    with open("{}/script.json".format(dirOutput), "w") as f:
-        f.write("[")
+    with open("{}/json.txt".format(dirOutput), "w") as f:
         for ele in jsonlist:
             f.write(json.dumps(jsonlist[ele], indent=4, sort_keys=True))
-            if len(jsonlist)-1 != ele:
-                f.write(",")
-        f.write("]")
         f.close()
 
 
+#
+# if __name__ == '__main__':
+#     speech_to_text('./recordings/test2.mp3')
 
-if __name__ == '__main__':
-    speech_to_text('./recordings/test2.mp3',"986dec2e-ec47-4249-9264-f6ff46962cf5")
