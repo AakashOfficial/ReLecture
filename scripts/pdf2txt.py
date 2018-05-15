@@ -11,10 +11,11 @@ def pdf2txt(pdf):
   
     output = []
     for i in range(pdfReader.numPages):
+        if i == 3 or i == 4 or i == 2: continue
         pageObj = pdfReader.getPage(i)
         text = pageObj.extractText()
         text = text.rstrip().replace("\n", " ")
-        output.append([i, text])
+        output.append([i, text, []])
 
     # save as json file
     # json_val = json.dumps(slide_by_number)
