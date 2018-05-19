@@ -87,5 +87,3 @@ def get_string_similarity(text_file):
 
 if __name__ == '__main__':
 	result = get_string_similarity("../../test_sample/2.txt")
-
-	print(result)
