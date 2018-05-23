@@ -1,16 +1,15 @@
 {% extends 'relecture/base.html' %}
 
 {% block content %}
-
-
-  <h1><a href="/">Relecture post</a></h1>
-    <h1>PDF.js Previous/Next example</h1>
-
+<div class="col-md-12">
+  <div class="col-md-12 text-center"><h2>PDF <span style="color:red">VIEW</span> </h2> </div>
+<br>
 <div>
   <button id="prev">Previous</button>
   <button id="next">Next</button>
   &nbsp; &nbsp;
   <span>Page: <span id="page_num"></span> / <span id="page_count"></span></span>
+</div>
 </div>
 
 <canvas id="the-canvas"></canvas>

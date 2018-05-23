@@ -1,0 +1,22 @@
+{% extends 'relecture/base.html' %}
+
+{% block content %}
+
+<div class="col-md-12 text-center file-upload-out">
+    <div class="col-md-12 file-upload-in">
+        <div class="col-md-12 text-center"><h2> <span style="color:red">PROGRESSING</span> </h2> </div>
+        <br>
+        &nbsp;
+    {% if first %}
+    <form action="" name="load-form" id="load-form" method="post">
+        {% csrf_token %}
+        <div>{{ rec_doc.doc_file.path }}</div>
+        <div>{{ pdf_doc.doc_file.path }}</div>
+        <div class="col-md-10 text-right">
+        </div>
+    </form>
+        {% endif %}
+    </div>
+</div>
+{% endblock %}
+

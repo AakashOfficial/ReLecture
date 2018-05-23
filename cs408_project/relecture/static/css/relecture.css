@@ -1,21 +1,63 @@
-h1 a {
-    color: #FCA205;
-    font-family: 'Nunito';
+body {
+    background-color: #dddddd;
 }
 
-body {
-    padding-left: 15px;
+#hidden-input{
+  display: none;
+}
+
+.center-out{
+  position:relative;
+  height:90%;
+  margin:auto;
+}
+.center-in {
+position:absolute;
+  height:30%;
+  top:0;
+  bottom:0;
+  right:0;
+  left:0;
+  margin:auto;
+}
+
+.file-upload-out{
+  position:relative;
+  height:40%;
+  margin-top: 10%;
+    margin-left: auto;
+  margin-bottom:auto;
+    margin-right: auto;
+    background-color: #ffffff;
+}
+.file-upload-in {
+position:absolute;
+  top:0;
+  bottom:0;
+  right:0;
+  left:0;
+  margin:auto;
+}
+
+.center-in button a {
+    color: #ffffff;
 }
 
 .page-header {
-    background-color: #ff9400;
+    background-color: #5c9aa7;
+    border-color: #5c9aa7;
     margin-top: 0;
-    padding: 20px 20px 60px 40px;
+    margin-bottom: 0;
+    padding-top: 5px;
+    padding-bottom: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
-.page-header h1, .page-header h1 a, .page-header h1 a:visited, .page-header h1 a:active {
+.page-header p, .page-header p a, .page-header p a:visited, .page-header p a:active {
     color: #ffffff;
-    font-size: 36pt;
+    font-size: 16pt;
+    text-align: center;
     text-decoration: none;
 }
 
@@ -42,7 +84,7 @@ h1, h2, h3, h4, h5, h6 {
 .top-menu, .top-menu:hover, .top-menu:visited {
     color: #ffffff;
     float: right;
-    font-size: 26pt;
+    font-size: 30pt;
     margin-right: 20px;
 }
 
