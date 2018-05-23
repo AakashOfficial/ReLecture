@@ -18,16 +18,16 @@
 # Date:   2015
 
 # coding=utf-8
-import json                        # json
-import threading                   # multi threading
-import os                          # for listing directories
-from queue import Queue                       # queue used for thread syncronization
+import json  # json
+import threading  # multi threading
+import os  # for listing directories
+from queue import Queue  # queue used for thread syncronization
 from queue import Empty
-import sys                         # system calls
-import argparse                    # for parsing arguments
-import base64                      # necessary to encode in base64
+import sys  # system calls
+import argparse  # for parsing arguments
+import base64  # necessary to encode in base64
 #                                  # according to the RFC2045 standard
-import requests                    # python HTTP requests library
+import requests  # python HTTP requests library
 
 # WebSockets
 from autobahn.twisted.websocket import WebSocketClientProtocol, \
@@ -36,7 +36,7 @@ from twisted.python import log
 from twisted.internet import ssl, reactor
 
 try:
-    raw_input          # Python 2
+    raw_input  # Python 2
 except NameError:
     raw_input = input  # Python 3
 
@@ -45,7 +45,6 @@ class Utils:
 
     @staticmethod
     def getAuthenticationToken(hostname, serviceName, username, password):
-
         fmt = hostname + "{0}/authorization/api/v1/token?url={0}/{1}/api"
         uri = fmt.format(hostname, serviceName)
         uri = uri.replace("wss://", "https://").replace("ws://", "https://")
@@ -132,7 +131,7 @@ class WSInterfaceProtocol(WebSocketClientProtocol):
         self.listeningMessages = 0
         self.timeFirstInterim = -1
         self.bytesSent = 0
-        self.chunkSize = 2000     # in bytes
+        self.chunkSize = 2000  # in bytes
         super(self.__class__, self).__init__()
         print(dirOutput)
         print("contentType: {} queueSize: {}".format(self.contentType,
@@ -231,7 +230,7 @@ class WSInterfaceProtocol(WebSocketClientProtocol):
                     bFinal = (res['final'] is True)
                     if bFinal:
                         print('final hypothesis: "' + hypothesis + '"')
-                        self.jsonlist[jsonObject['result_index']] = jsonObject 
+                        self.jsonlist[jsonObject['result_index']] = jsonObject
                         self.summary[self.uttNumber]['hypothesis'] += hypothesis
                     else:
                         print('interim hyp: "' + hypothesis + '"')
@@ -277,9 +276,10 @@ def check_credentials(credentials):
         raise argparse.ArgumentTypeError(
             '"%s" is not a valid format for the credentials ' % credentials)
 
+
 def speech_to_text(audio_file):
     credentials = '2dc8e7bd-8219-42cc-9913-cea7af948071:TVNKFLoJjeOv'
-    dirOutput = './output'
+    dirOutput = './relecture/convert_rec'
     contentType = 'audio/mp3'
     model = 'en-US_BroadbandModel'
     am_custom_id = None
@@ -357,7 +357,7 @@ def speech_to_text(audio_file):
     print(sorted(summary.items()))
     counter = 0
     for key, value in enumerate(sorted(summary.items())):
-        value = value[1]  
+        value = value[1]
         if value['status']['code'] == 1000:
             print('{}: {} {}'.format(key, value['status']['code'],
                                      value['hypothesis'].encode('utf-8')))
@@ -378,8 +378,6 @@ def speech_to_text(audio_file):
             f.write(json.dumps(jsonlist[ele], indent=4, sort_keys=True))
         f.close()
 
-
 #
 # if __name__ == '__main__':
 #     speech_to_text('./recordings/test2.mp3')
-
