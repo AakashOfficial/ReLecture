@@ -2,31 +2,40 @@
 
 {% block content %}
 
-<div>
-    <h3>File Uploading Form</h3>
+<!--<div>-->
+    <!--<h3>File Uploading Form</h3>-->
 
-    {% if documents %}
-        <ul>
-            {% for document in documents %}
-            <li><a href="{{ document.doc_file.path }}">{{document.doc_file.name}}</a></li>
-            {% endfor %}
-        </ul>
-        {% else %}
-            <p>No documents.</p>
-        {% endif %}
-</div>
+    <!--{% if documents %}-->
+        <!--<ul>-->
+            <!--{% for document in documents %}-->
+            <!--<li><a href="{{ document.doc_file.path }}">{{document.doc_file.name}}</a></li>-->
+            <!--{% endfor %}-->
+        <!--</ul>-->
+        <!--{% else %}-->
+            <!--<p>No documents.</p>-->
+        <!--{% endif %}-->
+<!--</div>-->
 
-<div>
+<div class="col-md-12 text-center file-upload-out">
+    <div class="col-md-12 file-upload-in">
+        <div class="col-md-12 text-center"><h2> UPLOAD <span style="color:red">PDF</span> FILE </h2> </div>
+        <br>
+        &nbsp;
     <form action="" method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <p>{{ form.non_field_errors}}</p>
-        <p>{{ form.doc_file.label_tag}} {{form.doc_file.help_text}}</p>
-        <p>
+        <div class="col-md-12 text-right">
             {{ form.doc_file.errors }}
             {{ form.doc_file }}
-        </p>
-        <p><input type="submit" value="Upload" /></p>
+        </div>
+        <br><br>
+        <br>
+        &nbsp;
+        <div class="col-md-10 text-right">
+        <button type="submit" class="btn btn-info text-right">CONFIRM</button>
+        </div>
     </form>
+    </div>
 </div>
 
 {% endblock %}
