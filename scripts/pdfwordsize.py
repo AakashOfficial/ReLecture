@@ -1,19 +1,24 @@
+from pdfmine import convert_pdf_to_html
+
 try: 
     from BeautifulSoup import BeautifulSoup
 except ImportError:
     from bs4 import BeautifulSoup
 
 def get_page_words(pdf_file):
+
 	delete_words = ['"',':',';','!','@','#','$','%','^','&',
 	                            '*','(',')','+','-','_','=','{','}','[',']','?',
 	                            '/','<','>',',','.','|','`','~','"',"'",'\\','\n']
 
-	contents = ""
-	with open(pdf_file) as f:
-	    for line in f.readlines():
-	        contents += line
+	contents = convert_pdf_to_html(pdf_file)
+	# with open(pdf_file) as f:
+	#     for line in f.readlines():
+	#         contents += line
 
-	contents = contents.replace("\n", "").replace("\r", "")
+	# contents = contents.replace("\n", "")
+	# contents = contents.replace("\r", "")
+	contents = contents.rstrip()
 	pages = contents.split("<a name=")[1:]
 	all_pages = []
 	for page in pages:
@@ -41,4 +46,4 @@ def get_page_words(pdf_file):
 
 	return all_pages
 
-# print (get_page_words("color_raw.html")[3])
+print (get_page_words("Lec01_note.pdf")[3])

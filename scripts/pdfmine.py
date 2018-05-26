@@ -34,11 +34,13 @@ def convert_pdf_to_html(path):
         interpreter.process_page(page)
     fp.close()
     device.close()
-    str = retstr.getvalue()
+    string = retstr.getvalue()
     retstr.close()
-    return str
+    # out = open(path[:-4]+".html", 'w')
+    # out.write(string)
+    return str(string)
 
 
 if __name__ == '__main__': 
-    str = convert_pdf_to_html("../../test_sample/Lec01_note.pdf")
+    str = convert_pdf_to_html("Lec01_note.pdf")
     print(str)
