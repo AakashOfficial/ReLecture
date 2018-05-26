@@ -3,7 +3,7 @@ from mp3segment import mp3_length, mp3_segment_all
 from pdf2txt import pdf_length, pdf2txt
 import nltk
 from nltk.corpus import stopwords
-import gensim
+# import gensim
 from pdfwordsize import get_page_words
 
 # def pre_process_txt(text_file):
@@ -37,8 +37,10 @@ def extract_keywords(text):
 	rake = RAKE.Rake(RAKE.SmartStopList())
 	return rake.run(text, maxWords=1)
 
-def pdf_keywords(pdf_text):
+def get_keywords(pdf_text, pdf_words):
 	stopwords_set = set(stopwords.words('english'))
+	keywords_list = []
+	assert len(pdf_text) == len(pdf_words)
 	for i in range(len(pdf_text)):
 		stripped = strip_text(pdf_text[i][1])
 		pdf_text[i][1] = stripped
@@ -46,9 +48,21 @@ def pdf_keywords(pdf_text):
 		keywords = stripped.split()[:4]
 		nlp_words = extract_keywords(stripped)
 		for w in nlp_words:
-			keywords.append(w[0])
-		pdf_text[i][2] = list(set(keywords).difference(stopwords_set))
-	return pdf_text
+			keywords.append(w[0].lower())
+
+		maxfont = 0
+		for w in pdf_words[i]:
+			if int(w[1]) > maxfont:
+				maxfont = int(w[1])
+			if w[2] == True:
+				keywords.append(w[0])
+
+		for w in pdf_words[i]:
+			if int(w[1]) == maxfont:
+				keywords.append(w[0])
+
+		keywords_list.append(list(set(keywords).difference(stopwords_set)))
+	return keywords_list
 
 
 def synchronize(rec_file, rec_format, pdf_file):
@@ -58,9 +72,11 @@ def synchronize(rec_file, rec_format, pdf_file):
 	# [sid, start_time, end_time, text] - e.g. [[0, 10, 4500, "So today.."]...]
 
 	pdf_text = pdf2txt(pdf_file)
-    # [slide_no, slide_text] - e.g. [[0, "Today: Lists Tuples Context"], ...]
+	# [slide_no, slide_text] - e.g. [[0, "Today: Lists Tuples Context"], ...]
 	pdf_words = get_page_words(pdf_file)
-    # [[word, font-size, bold], ...] - e.g. [[["welcome", 80, true], ["to", 20, false], ...], ...]
+	# [[word, font-size, bold], ...] - e.g. [[["welcome", 80, true], ["to", 20, false], ...], ...]
+	print (len(pdf_text))
+	print (len(pdf_words))
 
 	time_boundaries = []
 	sentence_boundaries = []
@@ -68,20 +84,22 @@ def synchronize(rec_file, rec_format, pdf_file):
 
 	########### main synchronization ############
 	# choose keywords for each slide: keyword from NLP + keyword from first 4 words
-	pdf_text = pdf_keywords(pdf_text)
+	pdf_keywords = get_keywords(pdf_text, pdf_words)
+
 	model = gensim.models.KeyedVectors.load_word2vec_format('./../model/GoogleNews-vectors-negative300.bin', binary=True)  	
 	vocab = model.vocab.keys()
+
 	partition = 0
-	for slide in pdf_text[1:]:
-		if slide[1] == len(pdf_text) or partition == len(sentence_list):
+	for i in range(1, len(pdf_keywords)):
+		slide = pdf_keywords[i]
+		if i == len(pdf_keywords)-1 or partition == len(sentence_list):
 			break
 		s_set = {}
-		#print(slide[2])
 		for line in sentence_list[partition+1:]:
 			idx = line[0]
 			s_set[idx] = 0.0
 			words_in_sentence = line[3].split()
-			for keyword in slide[2]:
+			for keyword in slide:
 				# if keyword in line[3]:
 				# 	s_set[idx] += 1
 				for word in words_in_sentence:
@@ -105,15 +123,12 @@ def synchronize(rec_file, rec_format, pdf_file):
 		#print (slide[0], " ", slide[2])
 		#print (s_set)
 		if not s_set:
-			#print ("HI line " + str(partition) + " slide " + str(slide[0]))
 			partition = partition
 		else:
 			partition = max(s_set, key=s_set.get)
-			#print (partition)
-			#print (sentence_list[partition])
 		sentence_boundaries.append(partition)
 
-	# print(sentence_boundaries, len(sentence_boundaries))
+	# # print(sentence_boundaries, len(sentence_boundaries))
 	x = 1;
 	print ("slide " + str(x) + ": " + sentence_list[0][3])
 	for i in sentence_boundaries:

@@ -46,4 +46,4 @@ def get_page_words(pdf_file):
 
 	return all_pages
 
-print (get_page_words("Lec01_note.pdf")[3])
+# print (get_page_words("Lec01_note.pdf")[3])
