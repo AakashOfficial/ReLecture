@@ -12,7 +12,7 @@ def pdf2txt(pdf):
   
     output = []
     for i in range(pdfReader.numPages):
-        if i == 3 or i == 4 or i == 2: continue
+        # if i == 3 or i == 4 or i == 2: continue
         pageObj = pdfReader.getPage(i)
         text = pageObj.extractText()
         text = text.rstrip().replace("\n", " ")
@@ -23,11 +23,15 @@ def pdf2txt(pdf):
     # f.write(json_val)
     # f.close()
 
-    # save as csv file
+    #save as csv file
+    w = csv.writer(open(pdf[:-4]+"_toText.csv", "w"))
+    for val in output:
+        w.writerow([val[0], "\""+val[1]+"\""])
+
+    return output
 
     # save as list
     #w = csv.writer(open(output_csv, "w"))
-    return output
 
 
 def pdf_length(pdf):
@@ -40,4 +44,4 @@ def get_contents(pdf):
     print (len(str(xx.pages[0]['/Parent']['/Kids'][0])))
 
 
-get_contents("Lec01_note.pdf")
+pdf2txt("Lec01_note.pdf")

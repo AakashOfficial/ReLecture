@@ -30,8 +30,6 @@ def get_difference(a, b):
 	final_list = list(result_set)
 	return final_list
 
-
-
 def token_set_ratio(old_text, new_text):
     old_text_list = re.findall(r"[\w']+", old_text)
     new_text_list = re.findall(r"[\w']+", new_text)
@@ -86,4 +84,5 @@ def get_string_similarity(text_file):
 	return result
 
 if __name__ == '__main__':
-	result = get_string_similarity("../../test_sample/2.txt")
+	result = get_string_similarity("Lec01_note_toText.csv")
+	print(result)
