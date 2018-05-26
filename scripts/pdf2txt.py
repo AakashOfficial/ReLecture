@@ -1,4 +1,5 @@
 import PyPDF2
+import pdfrw
 import json
 import csv
 
@@ -15,8 +16,7 @@ def pdf2txt(pdf):
         pageObj = pdfReader.getPage(i)
         text = pageObj.extractText()
         text = text.rstrip().replace("\n", " ")
-        output.append([i, text, []])
-
+        output.append([i, text])
     # save as json file
     # json_val = json.dumps(slide_by_number)
     # f = open(output_json, "w")
@@ -34,4 +34,10 @@ def pdf_length(pdf):
     reader = PyPDF2.PdfFileReader(open(pdf, 'rb'))
     return reader.getNumPages()
 
-# print(pdf2txt("Lec01_note.pdf"))
+def get_contents(pdf):
+    xx = pdfrw.PdfReader(pdf)
+    print (len(str(xx.pages[0]['/Parent'])))
+    print (len(str(xx.pages[0]['/Parent']['/Kids'][0])))
+
+
+get_contents("Lec01_note.pdf")
