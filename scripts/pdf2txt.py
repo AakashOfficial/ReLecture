@@ -8,15 +8,16 @@ def pdf2txt(pdf):
     # read pdf
     pdfFileObj = open(pdf, 'rb')
     pdfReader = PyPDF2.PdfFileReader(pdfFileObj)
-    print("slide number: {}".format(pdfReader.numPages))
+    # print("slide number: {}".format(pdfReader.numPages))
   
     output = []
+    count = 0
     for i in range(pdfReader.numPages):
-        # if i == 3 or i == 4 or i == 2: continue
         pageObj = pdfReader.getPage(i)
         text = pageObj.extractText()
         text = text.rstrip().replace("\n", " ")
-        output.append([i, text])
+        output.append([count, text])
+        count += 1
     # save as json file
     # json_val = json.dumps(slide_by_number)
     # f = open(output_json, "w")
@@ -26,7 +27,7 @@ def pdf2txt(pdf):
     #save as csv file
     w = csv.writer(open(pdf[:-4]+"_toText.csv", "w"))
     for val in output:
-        w.writerow([val[0], "\""+val[1]+"\""])
+        w.writerow([val[0],'"'+val[1]+'"'])
 
     return output
 

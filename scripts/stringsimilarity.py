@@ -84,5 +84,5 @@ def get_string_similarity(text_file):
 	return result
 
 if __name__ == '__main__':
-	result = get_string_similarity("Lec01_note_toText.csv")
+	result = get_string_similarity("Lec05_note_toText.csv")
 	print(result)
