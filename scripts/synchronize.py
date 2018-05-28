@@ -3,9 +3,10 @@ from mp3segment import mp3_length, mp3_segment_all
 from pdf2txt import pdf_length, pdf2txt
 import nltk
 from nltk.corpus import stopwords
-# import gensim
+import gensim
 from pdfwordsize import get_page_words
 from stringsimilarity import get_string_similarity, get_difference, get_text_list
+import collections
 
 # def pre_process_txt(text_file):
 
@@ -84,7 +85,7 @@ def get_keywords(pdf_name, pdf_text, pdf_words):
 
 def synchronize(rec_file, rec_format, pdf_file, json_file):
 	print("Starting ...")
-	json_path = "Lec01.json" # path of conversion of rec_file to text script
+	json_path = json_file # path of conversion of rec_file to text script
 	rec_len = mp3_length(rec_file, rec_format)
 	pdf_len = pdf_length(pdf_file)
 	
@@ -104,9 +105,9 @@ def synchronize(rec_file, rec_format, pdf_file, json_file):
 	########### main synchronization ############
 	# choose keywords for each slide: keyword from NLP + keyword from first 4 words
 	pdf_keywords = get_keywords(pdf_file[:-4], pdf_text, pdf_words)
-
-	#model = gensim.models.KeyedVectors.load_word2vec_format('./../model/GoogleNews-vectors-negative300.bin', binary=True)  	
-	#vocab = model.vocab.keys()
+	# load google word2vec
+	model = gensim.models.KeyedVectors.load_word2vec_format('./../model/GoogleNews-vectors-negative300.bin', binary=True)  	
+	vocab = model.vocab.keys()
 	
 	print("Getting boundaries ...")
 	partition = 0
@@ -118,7 +119,6 @@ def synchronize(rec_file, rec_format, pdf_file, json_file):
 		if partition == len(sentence_list):
 			break
 
-		#print(slide)
 		s_set = {}
 		for keyword in slide:
 			for line in sentence_list[partition+1:]:
@@ -152,8 +152,16 @@ def synchronize(rec_file, rec_format, pdf_file, json_file):
 										s_set[idx] += 1
 									else:
 										s_set[idx] = 1
-								#else:
-								#	s_set[line[0]] = 1
+							elif keyword in vocab:
+								if line[1]<(i*total_time/len(pdf_keywords))*1.2:
+									if word in vocab:
+										similarity = model.similarity(word, keyword)
+										if similarity >= 0.8:
+											print ("similarity:" + str(similarity))
+											if idx in s_set:
+												s_set[idx] += similarity
+											else:
+												s_set[idx] = similarity
 
 				s_set = collections.OrderedDict(sorted(s_set.items()))
 				print(s_set)
@@ -234,7 +242,7 @@ def synchronize(rec_file, rec_format, pdf_file, json_file):
 
 	return final_set
 
-print(synchronize("Lec01_voice.mp3", "mp3", "Lec01_note.pdf"))
+print(synchronize("Lec01_voice.mp3", "mp3", "Lec01_note.pdf", "Lec01.json"))
 # print (a[:3])
 
 
