@@ -3,7 +3,7 @@ from mp3segment import mp3_length, mp3_segment_all
 from pdf2txt import pdf_length, pdf2txt
 import nltk
 from nltk.corpus import stopwords
-import gensim
+# import gensim
 from pdfwordsize import get_page_words
 from stringsimilarity import get_string_similarity, get_difference, get_text_list
 
@@ -36,14 +36,14 @@ def extract_keywords(text):
 	rake = RAKE.Rake(RAKE.SmartStopList())
 	return rake.run(text, maxWords=1)
 
-def get_keywords(pdf_text, pdf_words):
+def get_keywords(pdf_name, pdf_text, pdf_words):
 	stopwords_set = set(stopwords.words('english'))
 	keywords_list = []
 	assert len(pdf_text) == len(pdf_words)
 
 	similar_index = []
-	similarities = get_string_similarity("Lec01_note_toText.csv")
-	print(similarities)
+	similarities = get_string_similarity(pdf_name+"_toText.csv")
+	# print(similarities)
 	for i in range(len(similarities)):
 		if similarities[i] > 85:
 			similar_index.append(i)
@@ -82,8 +82,11 @@ def get_keywords(pdf_text, pdf_words):
 	return keywords_list
 
 
-def synchronize(rec_file, rec_format, pdf_file):
+def synchronize(rec_file, rec_format, pdf_file, json_file):
+	print("Starting ...")
 	json_path = "Lec01.json" # path of conversion of rec_file to text script
+	rec_len = mp3_length(rec_file, rec_format)
+	pdf_len = pdf_length(pdf_file)
 	
 	sentence_list = parse_script(json_path)
 	# [sid, start_time, end_time, text] - e.g. [[0, 10, 4500, "So today.."]...]
@@ -94,16 +97,17 @@ def synchronize(rec_file, rec_format, pdf_file):
 	# [[word, font-size, bold], ...] - e.g. [[["welcome", 80, true], ["to", 20, false], ...], ...]
 
 	time_boundaries = []
-	sentence_boundaries = []
 	# [start_time, end_time] e.g. [[0, 1000], [1000, 4000]...]
+	sentence_boundaries = []
+	# [sentence number] e.g. [6, 15, 24, ...]
 
 	########### main synchronization ############
 	# choose keywords for each slide: keyword from NLP + keyword from first 4 words
-	pdf_keywords = get_keywords(pdf_text, pdf_words)
+	pdf_keywords = get_keywords(pdf_file[:-4], pdf_text, pdf_words)
 
 	#model = gensim.models.KeyedVectors.load_word2vec_format('./../model/GoogleNews-vectors-negative300.bin', binary=True)  	
 	#vocab = model.vocab.keys()
-
+	print("Getting boundaries ...")
 	partition = 0
 	for i in range(1, len(pdf_keywords)):
 		slide = pdf_keywords[i]
@@ -148,7 +152,7 @@ def synchronize(rec_file, rec_format, pdf_file):
 		#print (slide[0], " ", slide[2])
 		#print (s_set)
 		s_set = sorted(s_set.items(), key=lambda x: (-x[1], x[0]))
-		print(s_set)	
+		# print(s_set)	
 		if not s_set:
 			partition = partition
 		else:
@@ -156,26 +160,41 @@ def synchronize(rec_file, rec_format, pdf_file):
 		sentence_boundaries.append(partition)
 
 	# # print(sentence_boundaries, len(sentence_boundaries))
-	x = 1;
-	print ("slide " + str(x) + ": " + sentence_list[0][3])
-	for i in sentence_boundaries:
-		x += 1
-		print ("slide " + str(x) + ": " + sentence_list[i][3])
+	# x = 1;
+	# print ("slide " + str(x) + ": " + sentence_list[0][3])
+	# for i in sentence_boundaries:
+	# 	x += 1
+	# 	print ("slide " + str(x) + ": " + sentence_list[i][3])
+	print("Making time boundaries ...")
+	sentence_boundaries.append(len(sentence_list)-1)
+	time_boundaries.append([0,0])
+	for i in range(len(sentence_boundaries)):
+		sentence_no = sentence_boundaries[i]
+		prev_end_time = sentence_list[sentence_no-1][2]
+		curr_start_time = sentence_list[sentence_no][1]
+		time_boundaries[i][1] = prev_end_time
+		time_boundaries.append([curr_start_time,0])
+	time_boundaries[-1][1] = rec_len-1
 
+	print("Making final set ...")
+	final_set = []
+	start_sentence = 0
+	for i in range(len(sentence_boundaries)):
+		end_sentence = sentence_boundaries[i]
+		slide_script = ""
+		slide_sentences = []
+		for j in range(start_sentence, end_sentence):
+			slide_script += sentence_list[j][3] + ". "
+			slide_sentences.append(sentence_list[j][3])
+		final_set.append([i+1, slide_sentences, slide_script])
+		start_sentence = end_sentence
 
-	#############################################
+	print("Cutting mp3 ...")
+	mp3_segment_all(rec_file, rec_format, time_boundaries, rec_file[:-4])
 
-	########### demo synchronization ############	
-	# rec_len = mp3_length(rec_file, rec_format)
-	# pdf_len = pdf_length(pdf_file)
-	# seg_len = rec_len / pdf_len
-	# for i in range(pdf_len):
-	# 	boundaries.append([i*seg_len, (i+1)*seg_len])
-	# #############################################
+	return final_set
 
-	# mp3_segment_all(rec_file, rec_format, boundaries, rec_file[:-4])
-
-synchronize("voice.mp3", "mp3", "Lec01_note.pdf")
+print(synchronize("Lec01_voice.mp3", "mp3", "Lec01_note.pdf"))
 # print (a[:3])
 
 

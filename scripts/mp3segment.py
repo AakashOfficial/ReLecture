@@ -42,8 +42,8 @@ def mp3_segment_all(input_file, input_format, boundaries, output_file):
 	else:
 		return False
 
-	for i in range(1,len(boundaries)+1):
+	for i in range(len(boundaries)):
 		start, end = boundaries[i]
-		recording[start:end].export(output_file+"_"+str(i)+".mp3", format="mp3")
+		recording[start:end].export("segment/"+output_file+"_"+str(i+1)+".mp3", format="mp3")
 
 	return True
