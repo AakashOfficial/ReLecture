@@ -1,7 +1,7 @@
 {% load staticfiles %}
 <html>
     <head>
-        <title>Relecture post</title>
+        <title>Relecture</title>
 
         <link href='//fonts.googleapis.com/css?family=Lobster&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
         <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet" />
@@ -12,18 +12,19 @@
 
     </head>
     <body>
-        <div class="page-header">
-            <p><a href="/">Relecture</a></p>
-        </div>
 
-        <div class="content container">
+
+
             <div class="row">
-                <div class="col-md-12">
+                <div class="page-header">
+            <p><a href="/">Relecture</a></p>
+            </div>
+                <div class="col-lg-12">
                 {% block content %}
                 {% endblock %}
                 </div>
             </div>
-        </div>
+
 
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
     <script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.js' %}"></script>
@@ -31,107 +32,144 @@
 </html>
 
 <script type="text/javascript">
-    console.log('pass');
-    document.forms['load-form'].submit();
 
-//
-// // If absolute URL from the remote server is provided, configure the CORS
-// // header on that server.
-// var url = 'https://www.nada.kth.se/kurser/kth/2D1392/05/lectures/lecture_4.pdf';
-//
-// // Loaded via <script> tag, create shortcut to access PDF.js exports.
-// var pdfjsLib = window['pdfjs-dist/build/pdf'];
-//
-// // The workerSrc property shall be specified.
-// pdfjsLib.GlobalWorkerOptions.workerSrc = '//mozilla.github.io/pdf.js/build/pdf.worker.js';
-//
-// var pdfDoc = null,
-//     pageNum = 1,
-//     pageRendering = false,
-//     pageNumPending = null,
-//     scale = 0.8,
-//     canvas = document.getElementById('the-canvas'),
-//     ctx = canvas.getContext('2d');
-//
-// /**
-//  * Get page info from document, resize canvas accordingly, and render page.
-//  * @param num Page number.
-//  */
-// function renderPage(num) {
-//   pageRendering = true;
-//   // Using promise to fetch the page
-//   pdfDoc.getPage(num).then(function(page) {
-//     var viewport = page.getViewport(scale);
-//     canvas.height = viewport.height;
-//     canvas.width = viewport.width;
-//
-//     // Render PDF page into canvas context
-//     var renderContext = {
-//       canvasContext: ctx,
-//       viewport: viewport
-//     };
-//     var renderTask = page.render(renderContext);
-//
-//     // Wait for rendering to finish
-//     renderTask.promise.then(function() {
-//       pageRendering = false;
-//       if (pageNumPending !== null) {
-//         // New page rendering is pending
-//         renderPage(pageNumPending);
-//         pageNumPending = null;
-//       }
-//     });
-//   });
-//
-//   // Update page counters
-//   document.getElementById('page_num').textContent = num;
-// }
-//
-// /**
-//  * If another page rendering in progress, waits until the rendering is
-//  * finised. Otherwise, executes rendering immediately.
-//  */
-// function queueRenderPage(num) {
-//   if (pageRendering) {
-//     pageNumPending = num;
-//   } else {
-//     renderPage(num);
-//   }
-// }
-//
-// /**
-//  * Displays previous page.
-//  */
-// function onPrevPage() {
-//   if (pageNum <= 1) {
-//     return;
-//   }
-//   pageNum--;
-//   queueRenderPage(pageNum);
-// }
-// document.getElementById('prev').addEventListener('click', onPrevPage);
-//
-// /**
-//  * Displays next page.
-//  */
-// function onNextPage() {
-//   if (pageNum >= pdfDoc.numPages) {
-//     return;
-//   }
-//   pageNum++;
-//   queueRenderPage(pageNum);
-// }
-// document.getElementById('next').addEventListener('click', onNextPage);
-//
-// /**
-//  * Asynchronously downloads PDF.
-//  */
-// pdfjsLib.getDocument(url).then(function(pdfDoc_) {
-//   pdfDoc = pdfDoc_;
-//   document.getElementById('page_count').textContent = pdfDoc.numPages;
-//
-//   // Initial/first page rendering
-//   renderPage(pageNum);
-// });
+    // If absolute URL from the remote server is provided, configure the CORS
+    // header on that server.
+
+    var canvas = document.getElementById('the-canvas');
+
+    if (canvas!==null){
+
+    var url = "{% static 'media' %}/{{pdf_doc.doc_file.name|safe}}";
+    console.log(url);
+    // var url = 'https://relate.cs.illinois.edu/course/zuics101fa16/f/lectures/lec01.pdf';
+    // var url = '//cdn.mozilla.net/pdfjs/tracemonkey.pdf';
+    // var url = window.URL.createObjectURL(new File({{pdf_doc.doc_file}}));
+
+
+    // Loaded via <script> tag, create shortcut to access P
+    // DF.js exports.
+    var pdfjsLib = window['pdfjs-dist/build/pdf'];
+
+    // The workerSrc property shall be specified.
+    pdfjsLib.GlobalWorkerOptions.workerSrc = '//mozilla.github.io/pdf.js/build/pdf.worker.js';
+
+    var pdfDoc = null,
+        pageNum = 1,
+        pageRendering = false,
+        pageNumPending = null,
+        ctx = canvas.getContext('2d');
+
+
+    /**
+     * Get page info from document, resize canvas accordingly, and render page.
+     * @param num Page number.
+     */
+    function renderPage(num) {
+      pageRendering = true;
+      // Using promise to fetch the page
+      pdfDoc.getPage(num).then(function(page) {
+        canvas.width = 525;
+        var viewport = page.getViewport(canvas.width / page.getViewport(1.0).width);
+        canvas.height = viewport.height;
+
+
+        var box = document.getElementById('script-box');
+        box.height = viewport.height;
+
+        // Render PDF page into canvas context
+        var renderContext = {
+          canvasContext: ctx,
+          viewport: viewport
+        };
+        var renderTask = page.render(renderContext);
+
+        // Wait for rendering to finish
+        renderTask.promise.then(function() {
+          pageRendering = false;
+          if (pageNumPending !== null) {
+            // New page rendering is pending
+            renderPage(pageNumPending);
+            pageNumPending = null;
+          }
+        });
+      });
+      // Update page counters
+      document.getElementById('page_num').textContent = num;
+    }
+
+    /**
+     * If another page rendering in progress, waits until the rendering is
+     * finised. Otherwise, executes rendering immediately.
+     */
+    function queueRenderPage(num) {
+      if (pageRendering) {
+        pageNumPending = num;
+      } else {
+        renderPage(num);
+      }
+    }
+
+    /**
+     * Displays previous page.
+     */
+    function onPrevPage() {
+      if (pageNum <= 1) {
+        return;
+      }
+      pageNum--;
+      queueRenderPage(pageNum);
+      console.log(pageNum);
+      var temp = {{results|safe}}[pageNum-1][2]
+      document.getElementById('script-box').innerHTML=temp;
+      var audio = document.getElementById('v-audio');
+      var source = document.getElementById('audio-source');
+      source.src = "{% static 'slice_file'%}/seg_rec"+pageNum+".mp3";
+      console.log(source.src);
+      audio.load();
+      audio.play();
+    }
+    document.getElementById('prev').addEventListener('click', onPrevPage);
+
+    /**
+     * Displays next page.
+     */
+    function onNextPage() {
+      if (pageNum >= pdfDoc.numPages) {
+        return;
+      }
+      pageNum++;
+      queueRenderPage(pageNum);
+      var temp = {{results|safe}}[pageNum-1][2]
+      document.getElementById('script-box').innerHTML=temp;
+      var audio = document.getElementById('v-audio');
+      var source = document.getElementById('audio-source');
+      source.src = "{% static 'slice_file'%}/seg_rec"+pageNum+".mp3";
+      console.log(source.src);
+      audio.load();
+      audio.play();
+    }
+    document.getElementById('next').addEventListener('click', onNextPage);
+
+    /**
+     * Asynchronously downloads PDF.
+     */
+    pdfjsLib.getDocument(url).then(function(pdfDoc_) {
+      pdfDoc = pdfDoc_;
+      document.getElementById('page_count').textContent = pdfDoc.numPages;
+
+      // Initial/first page rendering
+
+    renderPage(pageNum);
+    console.log(pageNum)
+    var temp = {{results|safe}}[pageNum-1][2]
+    document.getElementById('script-box').innerHTML=temp;
+    });
+
+    }
+
+    if(typeof(document.forms['load-form'])!=='undefined'){
+        document.forms['load-form'].submit();
+    }
 
 </script>

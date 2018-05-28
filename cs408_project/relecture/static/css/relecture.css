@@ -6,6 +6,19 @@ body {
   display: none;
 }
 
+#script-box{
+    height: 400px;
+    overflow-y: scroll;
+}
+
+.panel-default > .panel-heading {
+    color: #ffffff;
+}
+
+.view-button {
+    margin-bottom: 20px;
+}
+
 .center-out{
   position:relative;
   height:90%;

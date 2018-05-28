@@ -9,7 +9,9 @@ Twisted>=13.2.0
 txaio>=2.0.4
 service_identity>=16.0.0
 python-rake
+cython
 jumpy
 nltk
 jellyfish
 pdfminer.six
+beautifulsoup4

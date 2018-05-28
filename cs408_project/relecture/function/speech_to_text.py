@@ -279,7 +279,7 @@ def check_credentials(credentials):
 
 def speech_to_text(audio_file):
     credentials = '2dc8e7bd-8219-42cc-9913-cea7af948071:TVNKFLoJjeOv'
-    dirOutput = './relecture/convert_rec'
+    dirOutput = './relecture/static/convert_rec'
     contentType = 'audio/mp3'
     model = 'en-US_BroadbandModel'
     am_custom_id = None
@@ -373,9 +373,13 @@ def speech_to_text(audio_file):
     fmt = "successful sessions: {} ({} errors) ({} empty hypotheses)"
     print(fmt.format(successful, len(summary) - successful, emptyHypotheses))
 
-    with open("{}/json.txt".format(dirOutput), "w") as f:
+    with open("{}/script.json".format(dirOutput), "w") as f:
+        f.write("[")
         for ele in jsonlist:
             f.write(json.dumps(jsonlist[ele], indent=4, sort_keys=True))
+            if len(jsonlist) - 1 != ele:
+                f.write(",")
+        f.write("]")
         f.close()
 
 #

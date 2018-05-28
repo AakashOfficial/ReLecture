@@ -11,6 +11,8 @@ from .models import Document
 from .forms import DocumentForm
 from .function.pdf2txt import pdf2txt
 from .function.speech_to_text import speech_to_text
+from .function.synchronize import synchronize
+import os
 
 
 def index(request):
@@ -63,7 +65,6 @@ def file_upload(request):
             new_doc = Document(doc_file=request.FILES['doc_file'])
             new_doc.save()
             print(new_doc.doc_file.path)
-            # speech_to_text(new_doc.doc_file.path)
             print(new_doc.pk)
             return redirect('pdf_upload', pk=new_doc.pk)
 
@@ -83,7 +84,6 @@ def pdf_upload(request, pk):
         if form.is_valid():
             pdf_doc = Document(doc_file=request.FILES['doc_file'])
             pdf_doc.save()
-            # pdf2txt(new_doc.doc_file.path, '1.json', '2.csv')
             return redirect('loading', rec_pk=rec_doc.pk, pdf_pk=pdf_doc.pk)
 
 
@@ -98,15 +98,24 @@ def pdf_upload(request, pk):
 def loading(request, rec_pk, pdf_pk):
     rec_doc = get_object_or_404(Document, pk=rec_pk)
     pdf_doc = get_object_or_404(Document, pk=pdf_pk)
+
     if request.method == 'POST':
-        from time import sleep
-        sleep(5)
+        # from time import sleep
+        # sleep(1)
         # speech_to_text(rec_doc.doc_file.path)
-        # pdf2txt(pdf_doc.doc_file.path, '1.json', '2.csv')
-        return redirect('pdf_view')
+
+        return redirect('pdf_view', pdf_pk=pdf_pk, rec_pk=rec_pk)
     else:
         return render(request, 'relecture/loading.html', {'rec_doc': rec_doc, 'pdf_doc': pdf_doc, 'first': 1})
 
 
-def pdf_view(request):
-    return render(request, 'relecture/pdf_view.html', {})
+def pdf_view(request, rec_pk, pdf_pk):
+    rec_doc = get_object_or_404(Document, pk=rec_pk)
+    pdf_doc = get_object_or_404(Document, pk=pdf_pk)
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    print(BASE_DIR)
+    # /Users/haseongkwon/ReLecture/cs408_project
+    json_path = os.path.join(os.path.join(os.path.join(os.path.join(BASE_DIR, 'relecture'), 'static'), 'convert_rec'),
+                             'script.json')
+    results = synchronize(rec_doc.doc_file.path, 'mp3', pdf_doc.doc_file.path, json_path)
+    return render(request, 'relecture/pdf_view.html', {'pdf_doc': pdf_doc, 'rec_doc': rec_doc, 'results': results})

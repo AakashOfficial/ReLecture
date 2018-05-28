@@ -12,6 +12,6 @@ urlpatterns = [
     url(r'^post_list/post/(?P<pk>\d+)/$', views.post_detail, name='post_detail'),
     url(r'^file_upload/$', views.file_upload, name='file_upload'),
     url(r'^pdf_upload/(?P<pk>\d+)/$', views.pdf_upload, name='pdf_upload'),
-    url(r'^pdf_view/$', views.pdf_view, name='pdf_view'),
+    url(r'^pdf_view/(?P<rec_pk>\d+)&(?P<pdf_pk>\d+)/$', views.pdf_view, name='pdf_view'),
     url(r'^loading/(?P<rec_pk>\d+)&(?P<pdf_pk>\d+)/$', views.loading, name='loading'),
 ]
