@@ -107,12 +107,18 @@ def synchronize(rec_file, rec_format, pdf_file, json_file):
 
 	#model = gensim.models.KeyedVectors.load_word2vec_format('./../model/GoogleNews-vectors-negative300.bin', binary=True)  	
 	#vocab = model.vocab.keys()
+	
 	print("Getting boundaries ...")
 	partition = 0
+	total_time = sentence_list[-1][2]
 	for i in range(1, len(pdf_keywords)):
+		print("page: "+str(i+1))
+		print("partition: "+ str(partition))
 		slide = pdf_keywords[i]
-		if i == len(pdf_keywords)-1 or partition == len(sentence_list):
+		if partition == len(sentence_list):
 			break
+
+		#print(slide)
 		s_set = {}
 		for keyword in slide:
 			for line in sentence_list[partition+1:]:
@@ -123,41 +129,75 @@ def synchronize(rec_file, rec_format, pdf_file, json_file):
 					else:
 						s_set[idx] = 1
 					break
-		# for line in sentence_list[partition+1:]:
-		# 	idx = line[0]
-		# 	s_set[idx] = 0.0
-		# 	words_in_sentence = line[3].split()
-		# 	for keyword in slide:
-		# 		if keyword in line[3]:
-		# 			s_set[idx] += 1
-				# for word in words_in_sentence:
-				# 	if keyword == word:
-				# 		s_set[idx] += 1
-				# 		break
-					# elif keyword in vocab:
-					# 	if word in vocab:
-					# 		similarity = model.similarity(word, keyword)
-					# 		if similarity >= 0.8:
-					# 			s_set[idx] += similarity/4
-			# print("\n")
-			# if len(words_in_sentence) != 0:
-			# 	s_set[idx] /= len(words_in_sentence)
-
-				# if keyword in line[3]:
-				# 	idx = line[0]
-				# 	if idx in s_set:
-				# 		s_set[idx] += 1
-				# 	else:
-				# 		s_set[idx] = 1
-		#print (slide[0], " ", slide[2])
-		#print (s_set)
-		s_set = sorted(s_set.items(), key=lambda x: (-x[1], x[0]))
-		# print(s_set)	
-		if not s_set:
+		s_lst = sorted(s_set.items(), key=lambda x: (-x[1], x[0]))
+		print(s_lst)
+		if not s_lst:
 			partition = partition
+			sentence_boundaries.append(partition)
 		else:
-			partition = s_set[0][0]
-		sentence_boundaries.append(partition)
+			if s_lst[0][1] > 1:
+				partition = s_lst[0][0]
+				sentence_boundaries.append(partition)
+			else:
+				print("second")
+				s_set = {}
+				for keyword in slide:
+					for line in sentence_list[partition+1:]:
+						words_in_sentence = line[3].split()
+						for word in words_in_sentence:
+							if keyword == word:
+								if line[1]<(i*total_time/len(pdf_keywords))*1.2:
+									idx = line[0]
+									if idx in s_set:
+										s_set[idx] += 1
+									else:
+										s_set[idx] = 1
+								#else:
+								#	s_set[line[0]] = 1
+
+				s_set = collections.OrderedDict(sorted(s_set.items()))
+				print(s_set)
+				if (len(s_set)) == 0:
+				 	partition = s_lst[0][0]
+				 	sentence_boundaries.append(partition)
+				 	continue
+
+				if not s_set:
+					partition =partition
+				else:
+					max_from_slide = 0
+					max_to_slide = 0
+					max_count = 0
+					start_slide = 0
+					pre_slide = 0
+					count = 0
+					for key, value in s_set.items():
+						if start_slide == 0:
+							max_from_slide = key
+							max_to_slide = key
+							max_count = count
+							start_slide = key
+							pre_slide = key
+							count = value
+						elif pre_slide + 1 == key:
+							pre_slide = key
+							count += value
+						else:
+							if max_count<count:
+								max_from_slide = start_slide
+								max_to_slide = pre_slide
+								max_count = count
+							start_slide = key
+							pre_slide = key
+							count = value
+						#print("max_slide: "+str(max_slide))
+						#print("max_count: "+str(max_count))
+						#print("start_slide: "+str(start_slide))
+						#print("pre_slide: "+str(pre_slide))
+						#print("count: "+str(count))
+						#print("\n--------\n")
+					partition = max_to_slide
+				sentence_boundaries.append(max_from_slide)
 
 	# # print(sentence_boundaries, len(sentence_boundaries))
 	# x = 1;
