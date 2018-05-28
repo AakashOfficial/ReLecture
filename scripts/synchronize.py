@@ -42,7 +42,7 @@ def get_keywords(pdf_text, pdf_words):
 	assert len(pdf_text) == len(pdf_words)
 
 	similar_index = []
-	similarities = get_string_similarity("Lec02_note_toText.csv")
+	similarities = get_string_similarity("Lec01_note_toText.csv")
 	print(similarities)
 	for i in range(len(similarities)):
 		if similarities[i] > 85:
@@ -83,7 +83,7 @@ def get_keywords(pdf_text, pdf_words):
 
 
 def synchronize(rec_file, rec_format, pdf_file):
-	json_path = "Lec02.json" # path of conversion of rec_file to text script
+	json_path = "Lec01.json" # path of conversion of rec_file to text script
 	
 	sentence_list = parse_script(json_path)
 	# [sid, start_time, end_time, text] - e.g. [[0, 10, 4500, "So today.."]...]
@@ -135,7 +135,7 @@ def synchronize(rec_file, rec_format, pdf_file):
 					# 		similarity = model.similarity(word, keyword)
 					# 		if similarity >= 0.8:
 					# 			s_set[idx] += similarity/4
-			# #print("\n")
+			# print("\n")
 			# if len(words_in_sentence) != 0:
 			# 	s_set[idx] /= len(words_in_sentence)
 
@@ -147,11 +147,12 @@ def synchronize(rec_file, rec_format, pdf_file):
 				# 		s_set[idx] = 1
 		#print (slide[0], " ", slide[2])
 		#print (s_set)
-		print(s_set)
+		s_set = sorted(s_set.items(), key=lambda x: (-x[1], x[0]))
+		print(s_set)	
 		if not s_set:
 			partition = partition
 		else:
-			partition = max(s_set, key=s_set.get)
+			partition = s_set[0][0]
 		sentence_boundaries.append(partition)
 
 	# # print(sentence_boundaries, len(sentence_boundaries))
@@ -174,7 +175,7 @@ def synchronize(rec_file, rec_format, pdf_file):
 
 	# mp3_segment_all(rec_file, rec_format, boundaries, rec_file[:-4])
 
-synchronize("voice.mp3", "mp3", "Lec02_note.pdf")
+synchronize("voice.mp3", "mp3", "Lec01_note.pdf")
 # print (a[:3])
 
 
