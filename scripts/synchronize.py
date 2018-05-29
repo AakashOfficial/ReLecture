@@ -19,6 +19,7 @@ def parse_script(json_path):
 		end_time = data[i]['results'][0]['alternatives'][0]['timestamps'][-1][2] * 1000
 		sentence_text = data[i]['results'][0]['alternatives'][0]['transcript']
 		sentence_text = sentence_text.replace("%HESITATION", "")
+		sentence_text = sentence_text.lstrip().rstrip()
 		sentence_list.append([i, int(start_time), int(end_time), sentence_text])
 	return sentence_list
 
@@ -230,17 +231,51 @@ def synchronize(rec_file, rec_format, pdf_file, json_file):
 	for i in range(len(sentence_boundaries)):
 		end_sentence = sentence_boundaries[i]
 		slide_script = ""
-		slide_sentences = []
+		highlight_set = get_highlight_set(pdf_words[i], pdf_keywords[i], sentence_list[start_sentence:end_sentence])
 		for j in range(start_sentence, end_sentence):
-			slide_script += sentence_list[j][3] + ". "
-			slide_sentences.append(sentence_list[j][3])
-		final_set.append([i+1, slide_sentences, slide_script])
+			slide_script += " " + sentence_list[j][3][0].upper() + sentence_list[j][3][1:] + "."
+		final_set.append([i+1, highlight_set, slide_script])
 		start_sentence = end_sentence
 
 	print("Cutting mp3 ...")
 	mp3_segment_all(rec_file, rec_format, time_boundaries, rec_file[:-4])
 
 	return final_set
+
+def get_highlight_set(bold_words, keywords, sentences):
+	highlight_set = []
+	for word in bold_words:
+		if word[2] and len(word[0]) > 1:
+			highlight_set.append([word[0],""])
+	s_set = {}
+	for word in keywords:
+		s_set[word] = 0
+		for line in sentences:
+			if word in line:
+				s_set[word] += 1
+	s_lst = sorted(s_set.items(), key=lambda x: -x[1])
+	count = 0
+	for word in s_lst:
+		if word[1] > 0:
+			highlight_set.append([word[0],""])
+		count += 1
+		if count == 4 or count == len(s_lst):
+			break
+
+	stopwords_set = set(stopwords.words('english'))
+	highlight_set = list(set(highlight_set).difference(stopwords_set))
+
+	for i in range(len(highlight_set)):
+		word = highlight_set[i][0]
+		script = ""
+		for line in sentences:
+			if word in line:
+				script += '<sapn style="background-color: yellow;"> ' + line[3][0].upper() + line[3][1:] + ".</span>"
+			else:
+				script += " " + line[3][0].upper() + line[3][1:] + "."
+		highlight_set[i][1] = script
+
+	return highlight_set
 
 print(synchronize("Lec01_voice.mp3", "mp3", "Lec01_note.pdf", "Lec01.json"))
 # print (a[:3])
