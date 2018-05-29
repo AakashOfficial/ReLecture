@@ -6,7 +6,10 @@
         <link href='//fonts.googleapis.com/css?family=Lobster&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
         <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet" />
         <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
         <link rel="stylesheet" href="{% static 'css/relecture.css' %}">
+
+
         <script src="//mozilla.github.io/pdf.js/build/pdf.js"></script>
 
 
@@ -41,7 +44,7 @@
     if (canvas!==null){
 
     var url = "{% static 'media' %}/{{pdf_doc.doc_file.name|safe}}";
-    console.log(url);
+
     // var url = 'https://relate.cs.illinois.edu/course/zuics101fa16/f/lectures/lec01.pdf';
     // var url = '//cdn.mozilla.net/pdfjs/tracemonkey.pdf';
     // var url = window.URL.createObjectURL(new File({{pdf_doc.doc_file}}));
@@ -118,16 +121,41 @@
         return;
       }
       pageNum--;
+      var k_list = {{results|safe}}[pageNum-1][1];
+    var k_len = k_list.length;
+    var k_id_name = ['k1-button-label', 'k2-button-label', 'k3-button-label', 'k4-button-label', 'k5-button-label'];
+    var k_b_id = ['k1-button', 'k2-button', 'k3-button', 'k4-button', 'k5-button'];
+    for (i=0; i<5; i++){
+        comp = document.getElementById(k_b_id[i]);
+        if(comp!==null){
+        comp.checked = false;
+        }
+    }
+    for (i=0; i<5; i++){
+        comp = document.getElementById(k_id_name[i]);
+        if(comp!==null){
+        comp.style.visibility="hidden";
+        }
+    }
+    for (i=0; i<k_len; i++){
+        comp = document.getElementById(k_id_name[i]);
+        if(comp!==null){
+            comp.innerHTML="<h1>"+k_list[i][0]+"</h1>";
+        comp.style.visibility = "visible";
+
+        }
+    }
       queueRenderPage(pageNum);
       console.log(pageNum);
-      var temp = {{results|safe}}[pageNum-1][2]
+      var temp = {{results|safe}}[pageNum-1][2];
       document.getElementById('script-box').innerHTML=temp;
       var audio = document.getElementById('v-audio');
       var source = document.getElementById('audio-source');
       source.src = "{% static 'slice_file'%}/seg_rec"+pageNum+".mp3";
-      console.log(source.src);
+
       audio.load();
       audio.play();
+
     }
     document.getElementById('prev').addEventListener('click', onPrevPage);
 
@@ -139,15 +167,39 @@
         return;
       }
       pageNum++;
+      var k_list = {{results|safe}}[pageNum-1][1];
+    var k_len = k_list.length;
+    var k_id_name = ['k1-button-label', 'k2-button-label', 'k3-button-label', 'k4-button-label', 'k5-button-label'];
+    var k_b_id = ['k1-button', 'k2-button', 'k3-button', 'k4-button', 'k5-button'];
+    for (i=0; i<5; i++){
+        comp = document.getElementById(k_b_id[i]);
+        if(comp!==null){
+        comp.checked = false;
+        }
+    }
+    for (i=0; i<5; i++){
+        comp = document.getElementById(k_id_name[i]);
+        if(comp!==null){
+        comp.style.visibility="hidden";
+        }
+    }
+    for (i=0; i<k_len; i++){
+        comp = document.getElementById(k_id_name[i]);
+        if(comp!==null){
+            comp.innerHTML="<h1>"+k_list[i][0]+"</h1>";
+        comp.style.visibility = "visible";
+
+        }
+    }
       queueRenderPage(pageNum);
-      var temp = {{results|safe}}[pageNum-1][2]
+      var temp = {{results|safe}}[pageNum-1][2];
       document.getElementById('script-box').innerHTML=temp;
       var audio = document.getElementById('v-audio');
       var source = document.getElementById('audio-source');
       source.src = "{% static 'slice_file'%}/seg_rec"+pageNum+".mp3";
-      console.log(source.src);
       audio.load();
       audio.play();
+
     }
     document.getElementById('next').addEventListener('click', onNextPage);
 
@@ -161,10 +213,76 @@
       // Initial/first page rendering
 
     renderPage(pageNum);
-    console.log(pageNum)
-    var temp = {{results|safe}}[pageNum-1][2]
+    console.log(pageNum);
+    var temp = {{results|safe}}[pageNum-1][2];
     document.getElementById('script-box').innerHTML=temp;
+    var k_list = {{results|safe}}[pageNum-1][1];
+    var k_len = k_list.length;
+    var k_id_name = ['k1-button-label', 'k2-button-label', 'k3-button-label', 'k4-button-label', 'k5-button-label'];
+    for (i=0; i<k_len; i++){
+        comp = document.getElementById(k_id_name[i]);
+        if(comp!==null){
+            comp.innerHTML="<h1>"+k_list[i][0]+"</h1>";
+        comp.style.visibility = "visible";
+
+        }
+    }
     });
+
+    function onkClear(){
+        var k_b_id = ['k1-button', 'k2-button', 'k3-button', 'k4-button', 'k5-button'];
+        for (i=0; i<5; i++){
+        comp = document.getElementById(k_b_id[i]);
+        if(comp!==null){
+        comp.checked = false;
+        }
+        var temp = {{results|safe}}[pageNum-1][2];
+      document.getElementById('script-box').innerHTML=temp;
+    }
+    }
+    document.getElementById('k-clear').addEventListener('click', onkClear);
+    function onk1Page() {
+      var k_list = {{results|safe}}[pageNum-1][1];
+      comp = document.getElementById('k1-button');
+          document.getElementById('script-box').innerHTML=k_list[0][1];
+          comp.checked=true;
+    }
+    document.getElementById('k1-button-label').addEventListener('click', onk1Page);
+
+
+    function onk2Page() {
+      var k_list = {{results|safe}}[pageNum-1][1];
+      comp = document.getElementById('k2-button');
+          document.getElementById('script-box').innerHTML=k_list[1][1];
+          comp.checked=true;
+    }
+    document.getElementById('k2-button-label').addEventListener('click', onk2Page);
+
+    function onk3Page() {
+      var k_list = {{results|safe}}[pageNum-1][1];
+      comp = document.getElementById('k3-button');
+          document.getElementById('script-box').innerHTML=k_list[2][1];
+          comp.checked=true;
+    }
+    document.getElementById('k3-button-label').addEventListener('click', onk3Page);
+
+    function onk4Page() {
+      var k_list = {{results|safe}}[pageNum-1][1];
+      comp = document.getElementById('k4-button');
+          document.getElementById('script-box').innerHTML=k_list[3][1];
+          comp.checked=true;
+    }
+    document.getElementById('k4-button-label').addEventListener('click', onk4Page);
+
+    function onk5Page() {
+      var k_list = {{results|safe}}[pageNum-1][1];
+      comp = document.getElementById('k5-button');
+          document.getElementById('script-box').innerHTML=k_list[4][1];
+          comp.checked=true;
+    }
+    document.getElementById('k5-button-label').addEventListener('click', onk5Page);
+
+
 
     }
 

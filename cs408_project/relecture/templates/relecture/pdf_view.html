@@ -18,6 +18,7 @@
   <button class="btn btn-relecture view-button" id="prev"><</button>
     <span><button class="btn btn-relecture view-button"><span id="page_num"></span> / <span id="page_count"></span></button></span>
   <button class="btn btn-relecture view-button" id="next">></button>
+
   <canvas id="the-canvas"></canvas>
 
     <!--<embed src= "{% static 'DS_CH7_Lists.pdf' %}#page=2" width= "100%" height= "100%">-->
@@ -30,7 +31,32 @@
 </div>
 
   <div class="col-lg-6">
-    <br><br><br>
+
+
+  <div class="button-wrap">
+    <span style="font-size: large;"> Keword: <button class="btn btn-info btn-xs" id="k-clear">Clear</button></span>
+    <input class="hidden radio-label keyradio" type="radio" name="accept-offers" id="k1-button"/>
+    <label class="button-label" id="k1-button-label" for="k1-button">
+      <h1>&nbsp;</h1>
+    </label>
+    <input class="hidden radio-label keyradio" type="radio" name="accept-offers" id="k2-button"/>
+    <label class="button-label" id="k2-button-label" for="k2-button">
+      <h1>&nbsp;</h1>
+    </label>
+    <input class="hidden radio-label keyradio" type="radio" name="accept-offers" id="k3-button"/>
+    <label class="button-label" id="k3-button-label" for="k3-button">
+      <h1>&nbsp;</h1>
+    </label>
+    <input class="hidden radio-label keyradio" type="radio" name="accept-offers" id="k4-button"/>
+    <label class="button-label" id="k4-button-label" for="k4-button">
+      <h1>&nbsp;</h1>
+    </label>
+    <input class="hidden radio-label keyradio" type="radio" name="accept-offers" id="k5-button"/>
+    <label class="button-label"  id="k5-button-label" for="k5-button">
+      <h1>&nbsp;</h1>
+    </label>
+  </div>
+
     <div class="panel-group">
     <div class="panel panel-default">
       <div class="panel-heading text-center">Script</div>

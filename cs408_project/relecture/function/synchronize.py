@@ -3,10 +3,11 @@ from .mp3segment import mp3_length, mp3_segment_all
 from .pdf2txt import pdf2txt
 import nltk
 from nltk.corpus import stopwords
-# import gensim
+import gensim
 from .pdfwordsize import get_page_words
 from .stringsimilarity import get_string_similarity, get_difference, get_text_list
 import os
+import collections
 
 
 # def pre_process_txt(text_file):
@@ -20,6 +21,7 @@ def parse_script(json_path):
         end_time = data[i]['results'][0]['alternatives'][0]['timestamps'][-1][2] * 1000
         sentence_text = data[i]['results'][0]['alternatives'][0]['transcript']
         sentence_text = sentence_text.replace("%HESITATION", "")
+        sentence_text = sentence_text.lstrip().rstrip()
         sentence_list.append([i, int(start_time), int(end_time), sentence_text])
     return sentence_list
 
@@ -110,14 +112,18 @@ def synchronize(rec_file, rec_format, pdf_file, json_file):
     ########### main synchronization ############
     # choose keywords for each slide: keyword from NLP + keyword from first 4 words
     pdf_keywords = get_keywords(pdf_text, pdf_words)
-
-    # model = gensim.models.KeyedVectors.load_word2vec_format('./../model/GoogleNews-vectors-negative300.bin', binary=True)
-    # vocab = model.vocab.keys()
+    BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    model = gensim.models.KeyedVectors.load_word2vec_format(
+        os.path.join(os.path.join(os.path.join(BASE_DIR, 'function'), 'model'), 'GoogleNews-vectors-negative300.bin'),
+        binary=True)
+    vocab = model.vocab.keys()
     print("Getting boundaries ...")
     partition = 0
+    total_time = sentence_list[-1][2]
+
     for i in range(1, len(pdf_keywords)):
         slide = pdf_keywords[i]
-        if i == len(pdf_keywords) - 1 or partition == len(sentence_list):
+        if partition == len(sentence_list):
             break
         s_set = {}
         for keyword in slide:
@@ -129,41 +135,83 @@ def synchronize(rec_file, rec_format, pdf_file, json_file):
                     else:
                         s_set[idx] = 1
                     break
-        # for line in sentence_list[partition+1:]:
-        # 	idx = line[0]
-        # 	s_set[idx] = 0.0
-        # 	words_in_sentence = line[3].split()
-        # 	for keyword in slide:
-        # 		if keyword in line[3]:
-        # 			s_set[idx] += 1
-        # for word in words_in_sentence:
-        # 	if keyword == word:
-        # 		s_set[idx] += 1
-        # 		break
-        # elif keyword in vocab:
-        # 	if word in vocab:
-        # 		similarity = model.similarity(word, keyword)
-        # 		if similarity >= 0.8:
-        # 			s_set[idx] += similarity/4
-        # print("\n")
-        # if len(words_in_sentence) != 0:
-        # 	s_set[idx] /= len(words_in_sentence)
 
-        # if keyword in line[3]:
-        # 	idx = line[0]
-        # 	if idx in s_set:
-        # 		s_set[idx] += 1
-        # 	else:
-        # 		s_set[idx] = 1
-        # print (slide[0], " ", slide[2])
-        # print (s_set)
-        s_set = sorted(s_set.items(), key=lambda x: (-x[1], x[0]))
-        # print(s_set)
-        if not s_set:
+        s_lst = sorted(s_set.items(), key=lambda x: (-x[1], x[0]))
+        if not s_lst:
             partition = partition
+            sentence_boundaries.append(partition)
         else:
-            partition = s_set[0][0]
-        sentence_boundaries.append(partition)
+            if s_lst[0][1] > 1:
+                partition = s_lst[0][0]
+                sentence_boundaries.append(partition)
+            else:
+                print("second")
+                s_set = {}
+                for keyword in slide:
+                    for line in sentence_list[partition + 1:]:
+                        words_in_sentence = line[3].split()
+                        for word in words_in_sentence:
+                            if keyword == word:
+                                if line[1] < (i * total_time / len(pdf_keywords)) * 1.2:
+                                    idx = line[0]
+                                    if idx in s_set:
+                                        s_set[idx] += 1
+                                    else:
+                                        s_set[idx] = 1
+                            elif keyword in vocab:
+                                if line[1] < (i * total_time / len(pdf_keywords)) * 1.2:
+                                    if word in vocab:
+                                        similarity = model.similarity(word, keyword)
+                                        if similarity >= 0.8:
+                                            print("similarity:" + str(similarity))
+                                            if idx in s_set:
+                                                s_set[idx] += similarity
+                                            else:
+                                                s_set[idx] = similarity
+
+                s_set = collections.OrderedDict(sorted(s_set.items()))
+                # print(s_set)
+                if (len(s_set)) == 0:
+                    partition = s_lst[0][0]
+                    sentence_boundaries.append(partition)
+                    continue
+
+                if not s_set:
+                    partition = partition
+                else:
+                    max_from_slide = 0
+                    max_to_slide = 0
+                    max_count = 0
+                    start_slide = 0
+                    pre_slide = 0
+                    count = 0
+                    for key, value in s_set.items():
+                        if start_slide == 0:
+                            max_from_slide = key
+                            max_to_slide = key
+                            max_count = count
+                            start_slide = key
+                            pre_slide = key
+                            count = value
+                        elif pre_slide + 1 == key:
+                            pre_slide = key
+                            count += value
+                        else:
+                            if max_count < count:
+                                max_from_slide = start_slide
+                                max_to_slide = pre_slide
+                                max_count = count
+                            start_slide = key
+                            pre_slide = key
+                            count = value
+                    # print("max_slide: "+str(max_slide))
+                    # print("max_count: "+str(max_count))
+                    # print("start_slide: "+str(start_slide))
+                    # print("pre_slide: "+str(pre_slide))
+                    # print("count: "+str(count))
+                    # print("\n--------\n")
+                    partition = max_to_slide
+                sentence_boundaries.append(max_from_slide)
 
     # # print(sentence_boundaries, len(sentence_boundaries))
     # x = 1;
@@ -188,17 +236,83 @@ def synchronize(rec_file, rec_format, pdf_file, json_file):
     for i in range(len(sentence_boundaries)):
         end_sentence = sentence_boundaries[i]
         slide_script = ""
-        slide_sentences = []
+        highlight_set = get_highlight_set(pdf_words[i], pdf_keywords[i], sentence_list[start_sentence:end_sentence])
         for j in range(start_sentence, end_sentence):
-            slide_script += sentence_list[j][3] + ". "
-            slide_sentences.append(sentence_list[j][3])
-        final_set.append([i + 1, slide_sentences, slide_script])
+            if len(sentence_list[j][3]) > 1:
+                slide_script += " " + sentence_list[j][3][0].upper() + sentence_list[j][3][1:] + "."
+        final_set.append([i + 1, highlight_set, slide_script])
         start_sentence = end_sentence
 
     print("Cutting mp3 ...")
     # mp3_segment_all(rec_file, rec_format, time_boundaries)
 
     return final_set
+
+
+def get_highlight_set(slide_words, keywords, sentences):
+    stopwords_set = set(stopwords.words('english'))
+    highlight_words = []
+    bold_words = []
+    highlight_set = []
+    for word in slide_words:
+        if word[2] and len(word[0]) > 1:
+            bold_words.append(word[0])
+    # print('before', bold_words)
+    bold_words = list(set(bold_words).difference(stopwords_set))
+    # print('after', bold_words)
+    b_set = {}
+    for word in bold_words:
+        b_set[word] = 0
+        for line in sentences:
+            if word in line[3] or similar_word(word) in line[3]:
+                b_set[word] += 1
+    b_lst = sorted(b_set.items(), key=lambda x: -x[1])
+
+    s_set = {}
+    for word in keywords:
+        s_set[word] = 0
+        for line in sentences:
+            if word in line[3] or similar_word(word) in line[3]:
+                s_set[word] += 1
+    s_lst = sorted(s_set.items(), key=lambda x: -x[1])
+    count = 0
+    for word in s_lst:
+        if word[1] > 0:
+            highlight_words.append(word[0])
+        count += 1
+        if count == 2 or count == len(s_lst):
+            break
+
+    while (len(highlight_words) < 5) and (len(b_lst) > 0):
+        bword = b_lst.pop(0)
+        if (not bword[0] in highlight_words) and (bword[1] > 0):
+            highlight_words.append(bword[0])
+
+    for word in highlight_words:
+        script = ""
+        for line in sentences:
+            if word in line[3] or similar_word(word) in line[3]:
+                script += ' <span style="background-color: yellow;">' + line[3][0].upper() + line[3][1:] + ".</span>"
+            else:
+                if len(line[3]) < 2:
+                    pass
+                else:
+                    script += " " + line[3][0].upper() + line[3][1:] + "."
+        highlight_set.append([word, script])
+
+    return highlight_set
+
+
+def similar_word(word):
+    if len(word) < 4:
+        return word
+    if word[-1] == "s":
+        return word[:-1]
+    if word[-2:] == "ed":
+        return word[:-2]
+    if word[-3:] == "ing":
+        return word[:-3]
+    return word[:5]
 
 # print(synchronize("Lec01_voice.mp3", "mp3", "Lec01_note.pdf"))
 # print (a[:3])

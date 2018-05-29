@@ -2,17 +2,94 @@ body {
     background-color: #dddddd;
 }
 
+
+
+.button-label {
+  display: inline-block;
+  padding: 0em 1em;
+  margin: 0em 0.2em 1.5em 0em;
+  cursor: pointer;
+  color: #292929;
+  border-radius: 0.25em;
+  background: #efefef;
+  -webkit-transition: 0.3s;
+  transition: 0.3s;
+  -webkit-user-select: none;
+     -moz-user-select: none;
+      -ms-user-select: none;
+          user-select: none;
+
+}
+
+.button-label h1 {
+  font-size: 1em;
+  font-family: "Lato", sans-serif;
+}
+.button-label:hover {
+  background: #d6d6d6;
+  color: #101010;
+}
+.button-label:active {
+  -webkit-transform: translateY(2px);
+          transform: translateY(2px);
+}
+@media (max-width: 40em) {
+  .button-label {
+    padding: 0em 1em 3px;
+    margin: 0.25em;
+  }
+}
+
+.keyradio:checked + .button-label {
+  background: #5c9aa7;
+  color: #efefef;
+}
+.keyradio:checked + .button-label:hover {
+  background: #5c9aa7;
+  color: #e2e2e2;
+}
+
+
+.hidden {
+  display: none;
+}
+
+
+.progress {
+    height: 30px;
+    width: 85%;
+    text-align: center;
+}
+
 #hidden-input{
   display: none;
 }
 
 #script-box{
-    height: 400px;
+    height: 360px;
     overflow-y: scroll;
 }
+#k1-button-label{
+    visibility: hidden;
+}
+#k2-button-label{
+    visibility: hidden;
+}
+#k3-button-label{
+    visibility: hidden;
+}
+#k4-button-label{
+    visibility: hidden;
+}
+#k5-button-label{
+    visibility: hidden;
+}
+
+
 
 .panel-default > .panel-heading {
     color: #ffffff;
+    padding: 6px 15px;
 }
 
 .view-button {

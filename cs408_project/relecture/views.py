@@ -101,7 +101,7 @@ def loading(request, rec_pk, pdf_pk):
 
     if request.method == 'POST':
         # from time import sleep
-        # sleep(1)
+        # sleep(10000)
         # speech_to_text(rec_doc.doc_file.path)
 
         return redirect('pdf_view', pdf_pk=pdf_pk, rec_pk=rec_pk)
@@ -113,9 +113,9 @@ def pdf_view(request, rec_pk, pdf_pk):
     rec_doc = get_object_or_404(Document, pk=rec_pk)
     pdf_doc = get_object_or_404(Document, pk=pdf_pk)
     BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-    print(BASE_DIR)
     # /Users/haseongkwon/ReLecture/cs408_project
     json_path = os.path.join(os.path.join(os.path.join(os.path.join(BASE_DIR, 'relecture'), 'static'), 'convert_rec'),
                              'script.json')
     results = synchronize(rec_doc.doc_file.path, 'mp3', pdf_doc.doc_file.path, json_path)
+    print('VIEW END')
     return render(request, 'relecture/pdf_view.html', {'pdf_doc': pdf_doc, 'rec_doc': rec_doc, 'results': results})
