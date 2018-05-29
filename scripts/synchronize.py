@@ -272,7 +272,11 @@ def get_highlight_set(bold_words, keywords, sentences):
 			if word in line:
 				script += '<sapn style="background-color: yellow;"> ' + line[3][0].upper() + line[3][1:] + ".</span>"
 			else:
-				script += " " + line[3][0].upper() + line[3][1:] + "."
+				if len(line[3]) < 2:
+					print ("WEIRD SENTENCE:", line)
+					script += " " + line[3] + "."
+				else:
+					script += " " + line[3][0].upper() + line[3][1:] + "."
 		highlight_set.append([word, script])
 
 	return highlight_set
