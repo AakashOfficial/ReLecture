@@ -243,10 +243,11 @@ def synchronize(rec_file, rec_format, pdf_file, json_file):
 	return final_set
 
 def get_highlight_set(bold_words, keywords, sentences):
+	highlight_words = []
 	highlight_set = []
 	for word in bold_words:
 		if word[2] and len(word[0]) > 1:
-			highlight_set.append([word[0],""])
+			highlight_words.append(word[0])
 	s_set = {}
 	for word in keywords:
 		s_set[word] = 0
@@ -257,23 +258,22 @@ def get_highlight_set(bold_words, keywords, sentences):
 	count = 0
 	for word in s_lst:
 		if word[1] > 0:
-			highlight_set.append([word[0],""])
+			highlight_words.append(word[0])
 		count += 1
 		if count == 4 or count == len(s_lst):
 			break
 
 	stopwords_set = set(stopwords.words('english'))
-	highlight_set = list(set(highlight_set).difference(stopwords_set))
+	highlight_words = list(set(highlight_words).difference(stopwords_set))
 
-	for i in range(len(highlight_set)):
-		word = highlight_set[i][0]
+	for word in highlight_words:
 		script = ""
 		for line in sentences:
 			if word in line:
 				script += '<sapn style="background-color: yellow;"> ' + line[3][0].upper() + line[3][1:] + ".</span>"
 			else:
 				script += " " + line[3][0].upper() + line[3][1:] + "."
-		highlight_set[i][1] = script
+		highlight_set.append([word, script])
 
 	return highlight_set
 
