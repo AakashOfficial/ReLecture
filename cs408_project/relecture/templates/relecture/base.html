@@ -290,4 +290,15 @@
         document.forms['load-form'].submit();
     }
 
+    var progress = document.getElementById("view-bar");
+    if(progress !== null && typeof(progress)!=='undefined'){
+      var width = 1;
+      setInterval(up_bar, 3000);
+        function up_bar() {
+            width++;
+            progress.style.width = width + '%';
+            console.log(progress.style.width);
+        }
+      }
+
 </script>

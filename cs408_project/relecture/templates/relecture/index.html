@@ -1,14 +1,85 @@
-{% extends 'relecture/base.html' %}
 
-{% block content %}
 
+<!--{% block content %}-->
+
+<!--<html>-->
+    <!--<div class="col-lg-12 center-out">-->
+
+        <!--<div class="col-lg-12 text-center center-in">-->
+            <!--<div calss="col-lg-12" style="font-size: 20px; font-family: Roboto, sans-serif;">RELECTURE</div>-->
+            <!--<div class="col-lg-12" style="font-size: 14px; font-weight: bold; color:#5c9aa7; font-family: Roboto, sans-serif;">-->
+                <!--<div class="col-lg-2"></div>-->
+                <!--<div class="col-lg-8 center-in-in">-->
+               <!--We're here to help you study better!<br>-->
+                <!--Upload your class slides and the voice recoring of the lecture, then we will synchronize them for you!<br>-->
+                    <!--<br>-->
+                    <!--<br>-->
+                    <!--</div>-->
+                <!--<div class="col-lg-2"></div>-->
+
+            <!--</div>-->
+
+            <!--<button type="button" class="btn btn-relecture btn-lg"  onclick = "location.href = '/file_upload'">&nbsp; START OUR SERVICE &nbsp;</button>-->
+
+        <!--</div>-->
+
+    <!--</div>-->
+
+<!--</html>-->
+
+<!--{% endblock %}-->
+
+{% load staticfiles %}
 <html>
-    <div class="col-lg-12 center-out">
-        <div class="col-lg-12 text-center center-in">
-            <button type="button" class="btn btn-relecture btn-lg"  onclick = "location.href = '/file_upload'">&nbsp; UPLOAD YOUR NEW LECTURE &nbsp;</button>
+    <head>
+        <title>Relecture</title>
+
+        <link href='//fonts.googleapis.com/css?family=Lobster&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
+        <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet" />
+        <link rel="stylesheet" href="{% static 'bootstrap/css/bootstrap.css' %}">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/normalize/5.0.0/normalize.min.css">
+        <link rel="stylesheet" href="{% static 'css/relecture.css' %}">
+
+
+        <script src="//mozilla.github.io/pdf.js/build/pdf.js"></script>
+
+
+    </head>
+    <body>
+
+
+
+            <div class="row">
+
+                <div class="col-lg-12">
+                <div class="col-lg-12 main-out">
+
+        <div class="col-lg-12 text-center main-in">
+            <br><br><br><br>
+            <div id= "main-name" class="col-lg-12" style="line-height: 120px; font-size: 120px; color:#5c9aa7; font-family: Roboto, sans-serif;">RELECTURE</div>
+            <div class="col-lg-12" style="font-size: 18px;  color:#777777; font-family: Roboto, sans-serif;">
+                <div class="col-lg-2"></div>
+                <div class="col-lg-8 main-in-in">
+               We're here to help you study better!<br>
+                Upload your class slides and the voice recoring of the lecture, <br>
+                    then we will synchronize them for you!<br>
+                    <br>
+                    <br>
+                    </div>
+                <div class="col-lg-2"></div>
+
+            </div>
+
+            <button type="button" class="btn btn-relecture btn-lg"  style="letter-spacing:1px" onclick = "location.href = '/file_upload'">&nbsp;&nbsp;&nbsp;&nbsp; START OUR SERVICE &nbsp;&nbsp;&nbsp;&nbsp;</button>
+
         </div>
+
     </div>
+                </div>
+            </div>
 
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.2/jquery.min.js"></script>
+    <script type="text/javascript" src="{% static 'bootstrap/js/bootstrap.js' %}"></script>
+    </body>
 </html>
-
-{% endblock %}

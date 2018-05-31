@@ -102,6 +102,7 @@ def loading(request, rec_pk, pdf_pk):
     if request.method == 'POST':
         # from time import sleep
         # sleep(10000)
+
         # speech_to_text(rec_doc.doc_file.path)
 
         return redirect('pdf_view', pdf_pk=pdf_pk, rec_pk=rec_pk)

@@ -10,7 +10,6 @@
     {% if first %}
     <form action="" name="load-form" id="load-form" method="post">
         {% csrf_token %}
-
         <div class="col-lg-10 text-right">
         </div>
     </form>
@@ -19,9 +18,13 @@
     <div class="col-lg-2">&nbsp;</div>
         <div class="col-lg-10 text-center">
     <div class="progress progress-striped active">
-     <div class="progress-bar" id="view-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 100%;"></div>
+     <div class="progress-bar" id="view-bar" role="progressbar" aria-valuenow="100" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"></div>
     </div>
             </div>
+        <div class="col-lg-12 text-right">
+            <br>
+        <p style="font-size: 15px;"><span style="color: #5c9aa7">Estimated time: </span>40% of Recording time</p>
+        </div>
         {% endif %}
     </div>
 </div>

@@ -3,18 +3,18 @@
 {% block content %}
 {% load staticfiles %}
 <div class="col-lg-12">
-  <div class="col-lg-12 text-center"><h2>PDF <span style="color:red">VIEW</span> </h2> </div>
-<br>
+  <!--<div class="col-lg-12 text-center"><h2>PDF <span style="color:red">VIEW</span> </h2> </div>-->
+<br><br><br>
 </div>
 
 <div class="col-lg-12">
 <div class="col-lg-6">
-<audio class="view-audio" id="v-audio" controls autoplay>
+<audio class="view-audio" style="width:380px;" id="v-audio" controls autoplay>
 
     <source id="audio-source" src="{% static 'slice_file/seg_rec1.mp3' %}" type="audio/mp3" />
 
 </audio>
-    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+    &nbsp; &nbsp;
   <button class="btn btn-relecture view-button" id="prev"><</button>
     <span><button class="btn btn-relecture view-button"><span id="page_num"></span> / <span id="page_count"></span></button></span>
   <button class="btn btn-relecture view-button" id="next">></button>
@@ -34,7 +34,7 @@
 
 
   <div class="button-wrap">
-    <span style="font-size: large;"> Keword: <button class="btn btn-info btn-xs" id="k-clear">Clear</button></span>
+    <span style="font-size: medium; color: #777777;">Select keyword: </span>
     <input class="hidden radio-label keyradio" type="radio" name="accept-offers" id="k1-button"/>
     <label class="button-label" id="k1-button-label" for="k1-button">
       <h1>&nbsp;</h1>
@@ -65,6 +65,7 @@
       </div>
     </div>
     </div>
+      <div class="col-lg-12 text-right" id="clear-btn"><button class="btn btn-relecture" id="k-clear">Clear hightlights</button></div>
   </div>
 </div>
 {% endblock %}

@@ -29,6 +29,9 @@ import base64  # necessary to encode in base64
 #                                  # according to the RFC2045 standard
 import requests  # python HTTP requests library
 
+from .del_stopwords import del_stopwords
+from .dictionary_customization import dictionary_customization
+
 # WebSockets
 from autobahn.twisted.websocket import WebSocketClientProtocol, \
     WebSocketClientFactory, connectWS
@@ -278,12 +281,15 @@ def check_credentials(credentials):
 
 
 def speech_to_text(audio_file):
+    del_stopwords("{% static 'convert_pdf' %}/pdf_test.csv", "./model/corpus2.txt")
+    dic_id = dictionary_customization("test custom model", "en-US_BroadbandModel", "test model", "./model/corpus2.txt",
+                                      "test_corpus")
     credentials = '2dc8e7bd-8219-42cc-9913-cea7af948071:TVNKFLoJjeOv'
     dirOutput = './relecture/static/convert_rec'
     contentType = 'audio/mp3'
     model = 'en-US_BroadbandModel'
     am_custom_id = None
-    lm_custom_id = None
+    lm_custom_id = dic_id
     threads = '1'
     optOut = False
     tokenauth = False

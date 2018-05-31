@@ -18,21 +18,26 @@
 
 <div class="col-lg-12 text-center file-upload-out">
     <div class="col-lg-12 file-upload-in">
-        <div class="col-lg-12 text-center"><h2> UPLOAD <span style="color:red">PDF</span> FILE </h2> </div>
+        <div class="col-lg-12 text-center"><h2> UPLOAD <span style="color:#5c9aa7">PDF</span> FILE </h2> </div>
         <br>
         &nbsp;
     <form action="" method="post" enctype="multipart/form-data">
+        <br>
         {% csrf_token %}
         <p>{{ form.non_field_errors}}</p>
-        <div class="col-lg-12 text-right">
-            {{ form.doc_file.errors }}
-            {{ form.doc_file }}
+        <div class="col-lg-12">
+            <div class="col-lg-4"></div>
+            <div class="col-lg-8>">
+                <div class="col-lg-2">{{ form.doc_file.errors }}
+                {{ form.doc_file }}</div>
+                <div class="col-lg-3"><button type="submit" class="btn btn-relecture text-right">CONFIRM</button></div>
+            </div>
         </div>
         <br><br>
-        <br>
+        <br><br>
         &nbsp;
         <div class="col-lg-10 text-right">
-        <button type="submit" class="btn btn-info text-right">CONFIRM</button>
+
         </div>
     </form>
     </div>

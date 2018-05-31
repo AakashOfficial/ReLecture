@@ -1,5 +1,6 @@
 body {
     background-color: #dddddd;
+    font-family: 'Roboto', sans-serif;
 }
 
 
@@ -23,7 +24,7 @@ body {
 
 .button-label h1 {
   font-size: 1em;
-  font-family: "Lato", sans-serif;
+  font-family: "Roboto", sans-serif;
 }
 .button-label:hover {
   background: #d6d6d6;
@@ -65,35 +66,49 @@ body {
   display: none;
 }
 
+#clear-btn{
+    padding-right: 0;
+}
+
 #script-box{
-    height: 360px;
+    height: 330px;
     overflow-y: scroll;
+    font-family: 'Roboto', sans-serif;
 }
 #k1-button-label{
     visibility: hidden;
+    font-family: 'Roboto', sans-serif;
 }
 #k2-button-label{
     visibility: hidden;
+    font-family: 'Roboto', sans-serif;
 }
 #k3-button-label{
     visibility: hidden;
+    font-family: 'Roboto', sans-serif;
 }
 #k4-button-label{
     visibility: hidden;
+    font-family: 'Roboto', sans-serif;
 }
 #k5-button-label{
     visibility: hidden;
+    font-family: 'Roboto', sans-serif;
 }
-
+.panel-group{
+    margin-bottom: 5px;
+}
 
 
 .panel-default > .panel-heading {
     color: #ffffff;
     padding: 6px 15px;
+    font-family: 'Roboto', sans-serif;
 }
 
 .view-button {
     margin-bottom: 20px;
+    font-family: 'Roboto', sans-serif;
 }
 
 .center-out{
@@ -109,16 +124,40 @@ position:absolute;
   right:0;
   left:0;
   margin:auto;
+    font-family: 'Roboto', sans-serif;
+}
+.center-in-in{
+
+}
+
+.main-out{
+  position:relative;
+  height:90%;
+  margin:auto;
+}
+.main-in {
+position:absolute;
+  height:70%;
+  top:0;
+  bottom:0;
+  right:0;
+  left:0;
+  margin:auto;
+    font-family: 'Roboto', sans-serif;
+}
+.main-in-in{
+
 }
 
 .file-upload-out{
   position:relative;
-  height:40%;
+  height:30%;
   margin-top: 10%;
     margin-left: auto;
   margin-bottom:auto;
     margin-right: auto;
     background-color: #ffffff;
+    font-family: 'Roboto', sans-serif;
 }
 .file-upload-in {
 position:absolute;
@@ -127,6 +166,7 @@ position:absolute;
   right:0;
   left:0;
   margin:auto;
+    font-family: 'Roboto', sans-serif;
 }
 
 .center-in button a {
@@ -142,13 +182,15 @@ position:absolute;
     padding-bottom: 5px;
     padding-left: 10px;
     padding-right: 10px;
+    font-family: 'Roboto', sans-serif;
 }
 
 .page-header p, .page-header p a, .page-header p a:visited, .page-header p a:active {
     color: #ffffff;
-    font-size: 16pt;
+    font-size: 18pt;
     text-align: center;
     text-decoration: none;
+    font-family: 'Roboto', sans-serif;
 }
 
 .content {
@@ -156,7 +198,7 @@ position:absolute;
 }
 
 h1, h2, h3, h4, h5, h6 {
-    font-family: 'Nunito', cursive;
+    font-family: 'Roboto', sans-serif;
 }
 
 .date {
