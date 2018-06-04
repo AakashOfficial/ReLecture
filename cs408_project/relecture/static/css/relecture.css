@@ -3,12 +3,22 @@ body {
     font-family: 'Roboto', sans-serif;
 }
 
+.k-clear{
+    font-size: 17px;
+}
 
+.panel-heading{
+    font-size: 17px;
+}
+
+.panel-body{
+    font-size: 17px;
+}
 
 .button-label {
   display: inline-block;
   padding: 0em 1em;
-  margin: 0em 0.2em 1.5em 0em;
+  margin: 0em 0em 1em 0em;
   cursor: pointer;
   color: #292929;
   border-radius: 0.25em;
@@ -23,7 +33,7 @@ body {
 }
 
 .button-label h1 {
-  font-size: 1em;
+  font-size: 1.2em;
   font-family: "Roboto", sans-serif;
 }
 .button-label:hover {
@@ -71,9 +81,10 @@ body {
 }
 
 #script-box{
-    height: 330px;
+    height: 560px;
     overflow-y: scroll;
     font-family: 'Roboto', sans-serif;
+    font-size: 17px;
 }
 #k1-button-label{
     visibility: hidden;
@@ -187,7 +198,7 @@ position:absolute;
 
 .page-header p, .page-header p a, .page-header p a:visited, .page-header p a:active {
     color: #ffffff;
-    font-size: 18pt;
+    font-size: 22pt;
     text-align: center;
     text-decoration: none;
     font-family: 'Roboto', sans-serif;

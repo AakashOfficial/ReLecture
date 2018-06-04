@@ -244,7 +244,7 @@ def synchronize(rec_file, rec_format, pdf_file, json_file):
         start_sentence = end_sentence
 
     print("Cutting mp3 ...")
-    mp3_segment_all(rec_file, rec_format, time_boundaries)
+    # mp3_segment_all(rec_file, rec_format, time_boundaries)
 
     return final_set
 

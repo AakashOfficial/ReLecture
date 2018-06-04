@@ -1,7 +1,7 @@
 {% load staticfiles %}
 <html>
     <head>
-        <title>Relecture</title>
+        <title>RELECTURE</title>
 
         <link href='//fonts.googleapis.com/css?family=Lobster&subset=latin,latin-ext' rel='stylesheet' type='text/css'>
         <link href="https://fonts.googleapis.com/css?family=Nunito" rel="stylesheet" />
@@ -20,7 +20,7 @@
 
             <div class="row">
                 <div class="page-header">
-            <p><a href="/">Relecture</a></p>
+            <p><a href="/">RELECTURE</a></p>
             </div>
                 <div class="col-lg-12">
                 {% block content %}
@@ -72,7 +72,7 @@
       pageRendering = true;
       // Using promise to fetch the page
       pdfDoc.getPage(num).then(function(page) {
-        canvas.width = 525;
+        canvas.width = 850;
         var viewport = page.getViewport(canvas.width / page.getViewport(1.0).width);
         canvas.height = viewport.height;
 
@@ -181,6 +181,7 @@
         comp = document.getElementById(k_id_name[i]);
         if(comp!==null){
         comp.style.visibility="hidden";
+        comp.innerHTML="";
         }
     }
     for (i=0; i<k_len; i++){
